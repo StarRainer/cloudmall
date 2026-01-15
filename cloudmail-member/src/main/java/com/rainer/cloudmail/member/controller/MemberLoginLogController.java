@@ -3,6 +3,7 @@ package com.rainer.cloudmail.member.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.rainer.common.utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,8 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rainer.cloudmail.member.entity.MemberLoginLogEntity;
 import com.rainer.cloudmail.member.service.MemberLoginLogService;
 import com.rainer.common.utils.PageUtils;
-import com.rainer.common.utils.R;
-
 
 
 /**
@@ -35,10 +34,10 @@ public class MemberLoginLogController {
      */
     @RequestMapping("/list")
 //    @RequiresPermissions("member:memberloginlog:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public Result list(@RequestParam Map<String, Object> params){
         PageUtils page = memberLoginLogService.queryPage(params);
 
-        return R.ok().put("page", page);
+        return Result.ok().put("page", page);
     }
 
 
@@ -47,10 +46,10 @@ public class MemberLoginLogController {
      */
     @RequestMapping("/info/{id}")
 //    @RequiresPermissions("member:memberloginlog:info")
-    public R info(@PathVariable("id") Long id){
+    public Result info(@PathVariable("id") Long id){
 		MemberLoginLogEntity memberLoginLog = memberLoginLogService.getById(id);
 
-        return R.ok().put("memberLoginLog", memberLoginLog);
+        return Result.ok().put("memberLoginLog", memberLoginLog);
     }
 
     /**
@@ -58,10 +57,10 @@ public class MemberLoginLogController {
      */
     @RequestMapping("/save")
 //    @RequiresPermissions("member:memberloginlog:save")
-    public R save(@RequestBody MemberLoginLogEntity memberLoginLog){
+    public Result save(@RequestBody MemberLoginLogEntity memberLoginLog){
 		memberLoginLogService.save(memberLoginLog);
 
-        return R.ok();
+        return Result.ok();
     }
 
     /**
@@ -69,10 +68,10 @@ public class MemberLoginLogController {
      */
     @RequestMapping("/update")
 //    @RequiresPermissions("member:memberloginlog:update")
-    public R update(@RequestBody MemberLoginLogEntity memberLoginLog){
+    public Result update(@RequestBody MemberLoginLogEntity memberLoginLog){
 		memberLoginLogService.updateById(memberLoginLog);
 
-        return R.ok();
+        return Result.ok();
     }
 
     /**
@@ -80,10 +79,10 @@ public class MemberLoginLogController {
      */
     @RequestMapping("/delete")
 //    @RequiresPermissions("member:memberloginlog:delete")
-    public R delete(@RequestBody Long[] ids){
+    public Result delete(@RequestBody Long[] ids){
 		memberLoginLogService.removeByIds(Arrays.asList(ids));
 
-        return R.ok();
+        return Result.ok();
     }
 
 }

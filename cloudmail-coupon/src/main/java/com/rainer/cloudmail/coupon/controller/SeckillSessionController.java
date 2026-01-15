@@ -3,6 +3,7 @@ package com.rainer.cloudmail.coupon.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.rainer.common.utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,8 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rainer.cloudmail.coupon.entity.SeckillSessionEntity;
 import com.rainer.cloudmail.coupon.service.SeckillSessionService;
 import com.rainer.common.utils.PageUtils;
-import com.rainer.common.utils.R;
-
 
 
 /**
@@ -35,10 +34,10 @@ public class SeckillSessionController {
      */
     @RequestMapping("/list")
 //    @RequiresPermissions("coupon:seckillsession:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public Result list(@RequestParam Map<String, Object> params){
         PageUtils page = seckillSessionService.queryPage(params);
 
-        return R.ok().put("page", page);
+        return Result.ok().put("page", page);
     }
 
 
@@ -47,10 +46,10 @@ public class SeckillSessionController {
      */
     @RequestMapping("/info/{id}")
 //    @RequiresPermissions("coupon:seckillsession:info")
-    public R info(@PathVariable("id") Long id){
+    public Result info(@PathVariable("id") Long id){
 		SeckillSessionEntity seckillSession = seckillSessionService.getById(id);
 
-        return R.ok().put("seckillSession", seckillSession);
+        return Result.ok().put("seckillSession", seckillSession);
     }
 
     /**
@@ -58,10 +57,10 @@ public class SeckillSessionController {
      */
     @RequestMapping("/save")
 //    @RequiresPermissions("coupon:seckillsession:save")
-    public R save(@RequestBody SeckillSessionEntity seckillSession){
+    public Result save(@RequestBody SeckillSessionEntity seckillSession){
 		seckillSessionService.save(seckillSession);
 
-        return R.ok();
+        return Result.ok();
     }
 
     /**
@@ -69,10 +68,10 @@ public class SeckillSessionController {
      */
     @RequestMapping("/update")
 //    @RequiresPermissions("coupon:seckillsession:update")
-    public R update(@RequestBody SeckillSessionEntity seckillSession){
+    public Result update(@RequestBody SeckillSessionEntity seckillSession){
 		seckillSessionService.updateById(seckillSession);
 
-        return R.ok();
+        return Result.ok();
     }
 
     /**
@@ -80,10 +79,10 @@ public class SeckillSessionController {
      */
     @RequestMapping("/delete")
 //    @RequiresPermissions("coupon:seckillsession:delete")
-    public R delete(@RequestBody Long[] ids){
+    public Result delete(@RequestBody Long[] ids){
 		seckillSessionService.removeByIds(Arrays.asList(ids));
 
-        return R.ok();
+        return Result.ok();
     }
 
 }

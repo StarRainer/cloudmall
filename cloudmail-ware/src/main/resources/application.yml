@@ -6,9 +6,27 @@ spring:
     password: ${DB_PASSWORD:123546}
     url: jdbc:mysql://${DB_HOST:localhost}:3306/cloudmail_wms?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai
     driver-class-name: com.mysql.cj.jdbc.Driver
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        username: nacos
+        password: nacos
+        namespace: f64498e5-740a-4dac-972d-22597d7dc2c1
+      config:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        username: nacos
+        password: nacos
+        namespace: f64498e5-740a-4dac-972d-22597d7dc2c1
+  config:
+    import:
+      - nacos:cloudmail-ware.yml?refreshEnabled=true
 server:
   port: 14000
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml # 配置 mapper.xml 的路径
+  global-config:
+    db-config:
+      id-type: auto # 表的主键为自增主键
   configuration:
-    database-id: auto # 表的主键为自增主键
+    map-underscore-to-camel-case: true # 开启驼峰命名转换

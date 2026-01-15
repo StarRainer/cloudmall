@@ -3,6 +3,7 @@ package com.rainer.cloudmail.product.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.rainer.common.utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,8 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rainer.cloudmail.product.entity.SkuInfoEntity;
 import com.rainer.cloudmail.product.service.SkuInfoService;
 import com.rainer.common.utils.PageUtils;
-import com.rainer.common.utils.R;
-
 
 
 /**
@@ -35,10 +34,10 @@ public class SkuInfoController {
      */
     @RequestMapping("/list")
 //    @RequiresPermissions("product:skuinfo:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public Result list(@RequestParam Map<String, Object> params){
         PageUtils page = skuInfoService.queryPage(params);
 
-        return R.ok().put("page", page);
+        return Result.ok().put("page", page);
     }
 
 
@@ -47,10 +46,10 @@ public class SkuInfoController {
      */
     @RequestMapping("/info/{skuId}")
 //    @RequiresPermissions("product:skuinfo:info")
-    public R info(@PathVariable("skuId") Long skuId){
+    public Result info(@PathVariable("skuId") Long skuId){
 		SkuInfoEntity skuInfo = skuInfoService.getById(skuId);
 
-        return R.ok().put("skuInfo", skuInfo);
+        return Result.ok().put("skuInfo", skuInfo);
     }
 
     /**
@@ -58,10 +57,10 @@ public class SkuInfoController {
      */
     @RequestMapping("/save")
 //    @RequiresPermissions("product:skuinfo:save")
-    public R save(@RequestBody SkuInfoEntity skuInfo){
+    public Result save(@RequestBody SkuInfoEntity skuInfo){
 		skuInfoService.save(skuInfo);
 
-        return R.ok();
+        return Result.ok();
     }
 
     /**
@@ -69,10 +68,10 @@ public class SkuInfoController {
      */
     @RequestMapping("/update")
 //    @RequiresPermissions("product:skuinfo:update")
-    public R update(@RequestBody SkuInfoEntity skuInfo){
+    public Result update(@RequestBody SkuInfoEntity skuInfo){
 		skuInfoService.updateById(skuInfo);
 
-        return R.ok();
+        return Result.ok();
     }
 
     /**
@@ -80,10 +79,10 @@ public class SkuInfoController {
      */
     @RequestMapping("/delete")
 //    @RequiresPermissions("product:skuinfo:delete")
-    public R delete(@RequestBody Long[] skuIds){
+    public Result delete(@RequestBody Long[] skuIds){
 		skuInfoService.removeByIds(Arrays.asList(skuIds));
 
-        return R.ok();
+        return Result.ok();
     }
 
 }

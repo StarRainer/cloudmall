@@ -3,6 +3,7 @@ package com.rainer.cloudmail.order.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.rainer.common.utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,8 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rainer.cloudmail.order.entity.OrderOperateHistoryEntity;
 import com.rainer.cloudmail.order.service.OrderOperateHistoryService;
 import com.rainer.common.utils.PageUtils;
-import com.rainer.common.utils.R;
-
 
 
 /**
@@ -35,10 +34,10 @@ public class OrderOperateHistoryController {
      */
     @RequestMapping("/list")
 //    @RequiresPermissions("order:orderoperatehistory:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public Result list(@RequestParam Map<String, Object> params){
         PageUtils page = orderOperateHistoryService.queryPage(params);
 
-        return R.ok().put("page", page);
+        return Result.ok().put("page", page);
     }
 
 
@@ -47,10 +46,10 @@ public class OrderOperateHistoryController {
      */
     @RequestMapping("/info/{id}")
 //    @RequiresPermissions("order:orderoperatehistory:info")
-    public R info(@PathVariable("id") Long id){
+    public Result info(@PathVariable("id") Long id){
 		OrderOperateHistoryEntity orderOperateHistory = orderOperateHistoryService.getById(id);
 
-        return R.ok().put("orderOperateHistory", orderOperateHistory);
+        return Result.ok().put("orderOperateHistory", orderOperateHistory);
     }
 
     /**
@@ -58,10 +57,10 @@ public class OrderOperateHistoryController {
      */
     @RequestMapping("/save")
 //    @RequiresPermissions("order:orderoperatehistory:save")
-    public R save(@RequestBody OrderOperateHistoryEntity orderOperateHistory){
+    public Result save(@RequestBody OrderOperateHistoryEntity orderOperateHistory){
 		orderOperateHistoryService.save(orderOperateHistory);
 
-        return R.ok();
+        return Result.ok();
     }
 
     /**
@@ -69,10 +68,10 @@ public class OrderOperateHistoryController {
      */
     @RequestMapping("/update")
 //    @RequiresPermissions("order:orderoperatehistory:update")
-    public R update(@RequestBody OrderOperateHistoryEntity orderOperateHistory){
+    public Result update(@RequestBody OrderOperateHistoryEntity orderOperateHistory){
 		orderOperateHistoryService.updateById(orderOperateHistory);
 
-        return R.ok();
+        return Result.ok();
     }
 
     /**
@@ -80,10 +79,10 @@ public class OrderOperateHistoryController {
      */
     @RequestMapping("/delete")
 //    @RequiresPermissions("order:orderoperatehistory:delete")
-    public R delete(@RequestBody Long[] ids){
+    public Result delete(@RequestBody Long[] ids){
 		orderOperateHistoryService.removeByIds(Arrays.asList(ids));
 
-        return R.ok();
+        return Result.ok();
     }
 
 }

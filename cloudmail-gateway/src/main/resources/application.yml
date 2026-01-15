@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: cloudmail-gateway
+  cloud:
+    nacos:
+      # 如果配置中心和服务发现中心在一台服务器，可以在这里写公共配置
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        username: nacos
+        password: nacos
+        namespace: f64498e5-740a-4dac-972d-22597d7dc2c1
+      config:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        username: nacos
+        password: nacos
+        namespace: f64498e5-740a-4dac-972d-22597d7dc2c1
+  config:
+    import:
+      - nacos:cloudmail-gateway.yml?refreshEnabled=true
+server:
+  port: 20000

@@ -3,6 +3,7 @@ package com.rainer.cloudmail.coupon.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.rainer.common.utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,8 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rainer.cloudmail.coupon.entity.CouponSpuCategoryRelationEntity;
 import com.rainer.cloudmail.coupon.service.CouponSpuCategoryRelationService;
 import com.rainer.common.utils.PageUtils;
-import com.rainer.common.utils.R;
-
 
 
 /**
@@ -35,10 +34,10 @@ public class CouponSpuCategoryRelationController {
      */
     @RequestMapping("/list")
 //    @RequiresPermissions("coupon:couponspucategoryrelation:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public Result list(@RequestParam Map<String, Object> params){
         PageUtils page = couponSpuCategoryRelationService.queryPage(params);
 
-        return R.ok().put("page", page);
+        return Result.ok().put("page", page);
     }
 
 
@@ -47,10 +46,10 @@ public class CouponSpuCategoryRelationController {
      */
     @RequestMapping("/info/{id}")
 //    @RequiresPermissions("coupon:couponspucategoryrelation:info")
-    public R info(@PathVariable("id") Long id){
+    public Result info(@PathVariable("id") Long id){
 		CouponSpuCategoryRelationEntity couponSpuCategoryRelation = couponSpuCategoryRelationService.getById(id);
 
-        return R.ok().put("couponSpuCategoryRelation", couponSpuCategoryRelation);
+        return Result.ok().put("couponSpuCategoryRelation", couponSpuCategoryRelation);
     }
 
     /**
@@ -58,10 +57,10 @@ public class CouponSpuCategoryRelationController {
      */
     @RequestMapping("/save")
 //    @RequiresPermissions("coupon:couponspucategoryrelation:save")
-    public R save(@RequestBody CouponSpuCategoryRelationEntity couponSpuCategoryRelation){
+    public Result save(@RequestBody CouponSpuCategoryRelationEntity couponSpuCategoryRelation){
 		couponSpuCategoryRelationService.save(couponSpuCategoryRelation);
 
-        return R.ok();
+        return Result.ok();
     }
 
     /**
@@ -69,10 +68,10 @@ public class CouponSpuCategoryRelationController {
      */
     @RequestMapping("/update")
 //    @RequiresPermissions("coupon:couponspucategoryrelation:update")
-    public R update(@RequestBody CouponSpuCategoryRelationEntity couponSpuCategoryRelation){
+    public Result update(@RequestBody CouponSpuCategoryRelationEntity couponSpuCategoryRelation){
 		couponSpuCategoryRelationService.updateById(couponSpuCategoryRelation);
 
-        return R.ok();
+        return Result.ok();
     }
 
     /**
@@ -80,10 +79,10 @@ public class CouponSpuCategoryRelationController {
      */
     @RequestMapping("/delete")
 //    @RequiresPermissions("coupon:couponspucategoryrelation:delete")
-    public R delete(@RequestBody Long[] ids){
+    public Result delete(@RequestBody Long[] ids){
 		couponSpuCategoryRelationService.removeByIds(Arrays.asList(ids));
 
-        return R.ok();
+        return Result.ok();
     }
 
 }

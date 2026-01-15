@@ -3,6 +3,7 @@ package com.rainer.cloudmail.coupon.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.rainer.common.utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,8 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rainer.cloudmail.coupon.entity.HomeSubjectEntity;
 import com.rainer.cloudmail.coupon.service.HomeSubjectService;
 import com.rainer.common.utils.PageUtils;
-import com.rainer.common.utils.R;
-
 
 
 /**
@@ -35,10 +34,10 @@ public class HomeSubjectController {
      */
     @RequestMapping("/list")
 //    @RequiresPermissions("coupon:homesubject:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public Result list(@RequestParam Map<String, Object> params){
         PageUtils page = homeSubjectService.queryPage(params);
 
-        return R.ok().put("page", page);
+        return Result.ok().put("page", page);
     }
 
 
@@ -47,10 +46,10 @@ public class HomeSubjectController {
      */
     @RequestMapping("/info/{id}")
 //    @RequiresPermissions("coupon:homesubject:info")
-    public R info(@PathVariable("id") Long id){
+    public Result info(@PathVariable("id") Long id){
 		HomeSubjectEntity homeSubject = homeSubjectService.getById(id);
 
-        return R.ok().put("homeSubject", homeSubject);
+        return Result.ok().put("homeSubject", homeSubject);
     }
 
     /**
@@ -58,10 +57,10 @@ public class HomeSubjectController {
      */
     @RequestMapping("/save")
 //    @RequiresPermissions("coupon:homesubject:save")
-    public R save(@RequestBody HomeSubjectEntity homeSubject){
+    public Result save(@RequestBody HomeSubjectEntity homeSubject){
 		homeSubjectService.save(homeSubject);
 
-        return R.ok();
+        return Result.ok();
     }
 
     /**
@@ -69,10 +68,10 @@ public class HomeSubjectController {
      */
     @RequestMapping("/update")
 //    @RequiresPermissions("coupon:homesubject:update")
-    public R update(@RequestBody HomeSubjectEntity homeSubject){
+    public Result update(@RequestBody HomeSubjectEntity homeSubject){
 		homeSubjectService.updateById(homeSubject);
 
-        return R.ok();
+        return Result.ok();
     }
 
     /**
@@ -80,10 +79,10 @@ public class HomeSubjectController {
      */
     @RequestMapping("/delete")
 //    @RequiresPermissions("coupon:homesubject:delete")
-    public R delete(@RequestBody Long[] ids){
+    public Result delete(@RequestBody Long[] ids){
 		homeSubjectService.removeByIds(Arrays.asList(ids));
 
-        return R.ok();
+        return Result.ok();
     }
 
 }

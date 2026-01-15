@@ -3,6 +3,7 @@ package com.rainer.cloudmail.ware.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.rainer.common.utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,8 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rainer.cloudmail.ware.entity.UndoLogEntity;
 import com.rainer.cloudmail.ware.service.UndoLogService;
 import com.rainer.common.utils.PageUtils;
-import com.rainer.common.utils.R;
-
 
 
 /**
@@ -35,10 +34,10 @@ public class UndoLogController {
      */
     @RequestMapping("/list")
 //    @RequiresPermissions("ware:undolog:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public Result list(@RequestParam Map<String, Object> params){
         PageUtils page = undoLogService.queryPage(params);
 
-        return R.ok().put("page", page);
+        return Result.ok().put("page", page);
     }
 
 
@@ -47,10 +46,10 @@ public class UndoLogController {
      */
     @RequestMapping("/info/{id}")
 //    @RequiresPermissions("ware:undolog:info")
-    public R info(@PathVariable("id") Long id){
+    public Result info(@PathVariable("id") Long id){
 		UndoLogEntity undoLog = undoLogService.getById(id);
 
-        return R.ok().put("undoLog", undoLog);
+        return Result.ok().put("undoLog", undoLog);
     }
 
     /**
@@ -58,10 +57,10 @@ public class UndoLogController {
      */
     @RequestMapping("/save")
 //    @RequiresPermissions("ware:undolog:save")
-    public R save(@RequestBody UndoLogEntity undoLog){
+    public Result save(@RequestBody UndoLogEntity undoLog){
 		undoLogService.save(undoLog);
 
-        return R.ok();
+        return Result.ok();
     }
 
     /**
@@ -69,10 +68,10 @@ public class UndoLogController {
      */
     @RequestMapping("/update")
 //    @RequiresPermissions("ware:undolog:update")
-    public R update(@RequestBody UndoLogEntity undoLog){
+    public Result update(@RequestBody UndoLogEntity undoLog){
 		undoLogService.updateById(undoLog);
 
-        return R.ok();
+        return Result.ok();
     }
 
     /**
@@ -80,10 +79,10 @@ public class UndoLogController {
      */
     @RequestMapping("/delete")
 //    @RequiresPermissions("ware:undolog:delete")
-    public R delete(@RequestBody Long[] ids){
+    public Result delete(@RequestBody Long[] ids){
 		undoLogService.removeByIds(Arrays.asList(ids));
 
-        return R.ok();
+        return Result.ok();
     }
 
 }

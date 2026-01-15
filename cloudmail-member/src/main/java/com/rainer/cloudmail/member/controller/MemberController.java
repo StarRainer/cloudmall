@@ -3,7 +3,8 @@ package com.rainer.cloudmail.member.controller;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.rainer.cloudmail.member.feign.CouponFeignService;
+import com.rainer.common.utils.Result;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,8 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rainer.cloudmail.member.entity.MemberEntity;
 import com.rainer.cloudmail.member.service.MemberService;
 import com.rainer.common.utils.PageUtils;
-import com.rainer.common.utils.R;
-
 
 
 /**
@@ -27,18 +26,33 @@ import com.rainer.common.utils.R;
 @RestController
 @RequestMapping("member/member")
 public class MemberController {
-    @Autowired
-    private MemberService memberService;
+    private final MemberService memberService;
+
+    private final CouponFeignService couponFeignService;
+
+    public MemberController(MemberService memberService, CouponFeignService couponFeignService) {
+        this.memberService = memberService;
+        this.couponFeignService = couponFeignService;
+    }
+
+    @RequestMapping("/coupons/{memberId}")
+    public Result getCouponInfo(@PathVariable("memberId") Long memberId) {
+        MemberEntity memberEntity = new MemberEntity();
+        memberEntity.setNickname("张三");
+        memberEntity.setId(memberId);
+        Result memberCoupons = couponFeignService.getInfoByMemberId(memberId);
+        return Result.ok().put("member", memberEntity).put("coupons", memberCoupons.get("coupons"));
+    }
 
     /**
      * 列表
      */
     @RequestMapping("/list")
 //    @RequiresPermissions("member:member:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public Result list(@RequestParam Map<String, Object> params){
         PageUtils page = memberService.queryPage(params);
 
-        return R.ok().put("page", page);
+        return Result.ok().put("page", page);
     }
 
 
@@ -47,10 +61,10 @@ public class MemberController {
      */
     @RequestMapping("/info/{id}")
 //    @RequiresPermissions("member:member:info")
-    public R info(@PathVariable("id") Long id){
+    public Result info(@PathVariable("id") Long id){
 		MemberEntity member = memberService.getById(id);
 
-        return R.ok().put("member", member);
+        return Result.ok().put("member", member);
     }
 
     /**
@@ -58,10 +72,10 @@ public class MemberController {
      */
     @RequestMapping("/save")
 //    @RequiresPermissions("member:member:save")
-    public R save(@RequestBody MemberEntity member){
+    public Result save(@RequestBody MemberEntity member){
 		memberService.save(member);
 
-        return R.ok();
+        return Result.ok();
     }
 
     /**
@@ -69,10 +83,10 @@ public class MemberController {
      */
     @RequestMapping("/update")
 //    @RequiresPermissions("member:member:update")
-    public R update(@RequestBody MemberEntity member){
+    public Result update(@RequestBody MemberEntity member){
 		memberService.updateById(member);
 
-        return R.ok();
+        return Result.ok();
     }
 
     /**
@@ -80,10 +94,10 @@ public class MemberController {
      */
     @RequestMapping("/delete")
 //    @RequiresPermissions("member:member:delete")
-    public R delete(@RequestBody Long[] ids){
+    public Result delete(@RequestBody Long[] ids){
 		memberService.removeByIds(Arrays.asList(ids));
 
-        return R.ok();
+        return Result.ok();
     }
 
 }
