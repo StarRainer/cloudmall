@@ -1,11 +1,6 @@
 spring:
   application:
-    name: cloudmall-product
-  datasource: # 配置 MySQL 数据源
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:123456}
-    url: jdbc:mysql://${DB_HOST:localhost}:3306/cloudmail_pms?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    name: cloudmall-third-party
   cloud:
     nacos:
       discovery:
@@ -23,14 +18,7 @@ spring:
 #    import:
 #      - nacos:cloudmall-product.yml?refreshEnabled=true
 server:
-  port: 13000
-mybatis-plus:
-  mapper-locations: classpath:/mapper/**/*.xml # 配置 mapper.xml 的路径
-  global-config:
-    db-config:
-      id-type: auto # 表的主键为自增主键
-  configuration:
-    map-underscore-to-camel-case: true # 开启驼峰命名转换
+  port: 16000
 alibaba:
   cloud:
     access-key: ${ALIYUN_ACCESS_KEY}
