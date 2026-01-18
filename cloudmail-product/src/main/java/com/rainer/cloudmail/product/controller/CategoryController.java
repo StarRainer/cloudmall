@@ -2,13 +2,14 @@ package com.rainer.cloudmail.product.controller;
 
 import com.rainer.cloudmail.product.entity.CategoryEntity;
 import com.rainer.cloudmail.product.service.CategoryService;
-import com.rainer.common.utils.PageUtils;
 import com.rainer.common.utils.Result;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 
 
@@ -42,21 +43,17 @@ public class CategoryController {
      * 信息
      */
     @RequestMapping("/info/{catId}")
-//    @RequiresPermissions("product:category:info")
     public Result info(@PathVariable("catId") Long catId){
 		CategoryEntity category = categoryService.getById(catId);
-
-        return Result.ok().put("category", category);
+        return Result.ok().put("data", category);
     }
 
     /**
      * 保存
      */
     @RequestMapping("/save")
-//    @RequiresPermissions("product:category:save")
     public Result save(@RequestBody CategoryEntity category){
 		categoryService.save(category);
-
         return Result.ok();
     }
 
@@ -67,7 +64,15 @@ public class CategoryController {
 //    @RequiresPermissions("product:category:update")
     public Result update(@RequestBody CategoryEntity category){
 		categoryService.updateById(category);
+        return Result.ok();
+    }
 
+    /**
+     * 批量修改
+     */
+    @RequestMapping("/update/batch")
+    public Result updateBatch(@RequestBody CategoryEntity[] categoryEntities) {
+        categoryService.updateBatchById(Arrays.asList(categoryEntities));
         return Result.ok();
     }
 
@@ -75,10 +80,8 @@ public class CategoryController {
      * 删除
      */
     @RequestMapping("/delete")
-//    @RequiresPermissions("product:category:delete")
     public Result delete(@RequestBody Long[] catIds){
-		categoryService.removeByIds(Arrays.asList(catIds));
-
+		categoryService.removeMenusByIds(Arrays.asList(catIds));
         return Result.ok();
     }
 

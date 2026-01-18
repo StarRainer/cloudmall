@@ -35,18 +35,22 @@ public class Result extends HashMap<String, Object> {
 
 	public static Result ok(String msg) {
 		Result result = new Result();
+		result.put("code", HttpStatus.OK.value());
 		result.put("msg", msg);
 		return result;
 	}
 	
 	public static Result ok(Map<String, Object> map) {
 		Result result = new Result();
+		result.put("code", HttpStatus.OK.value());
 		result.putAll(map);
 		return result;
 	}
 	
 	public static Result ok() {
-		return new Result();
+		Result result = new Result();
+		result.put("code", HttpStatus.OK.value());
+		return result;
 	}
 
 	@Override

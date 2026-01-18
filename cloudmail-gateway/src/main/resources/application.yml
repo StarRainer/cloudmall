@@ -14,6 +14,20 @@ spring:
         username: nacos
         password: nacos
         namespace: f64498e5-740a-4dac-972d-22597d7dc2c1
+    gateway:
+      routes:
+        - id: product_route
+          uri: lb://cloudmail-product
+          predicates:
+            - Path=/api/product/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+        - id: admin_route
+          uri: lb://renren-fast
+          predicates:
+            - Path=/api/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /renren-fast/$\{segment}
   config:
     import:
       - nacos:cloudmail-gateway.yml?refreshEnabled=true
