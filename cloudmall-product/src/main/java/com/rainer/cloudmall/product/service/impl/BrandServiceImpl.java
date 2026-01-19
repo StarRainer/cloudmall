@@ -9,12 +9,19 @@ import com.rainer.cloudmall.product.dao.BrandDao;
 import com.rainer.cloudmall.product.entity.BrandEntity;
 import com.rainer.cloudmall.product.service.BrandService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.Map;
 
 
 @Service("brandService")
 public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> implements BrandService {
+    private final CategoryBrandRelationServiceImpl categoryBrandRelationService;
+
+    public BrandServiceImpl(CategoryBrandRelationServiceImpl categoryBrandRelationService) {
+        this.categoryBrandRelationService = categoryBrandRelationService;
+    }
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -29,6 +36,17 @@ public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> impleme
         );
 
         return new PageUtils(page);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void updateCascade(BrandEntity brand) {
+        updateById(brand);
+        if (StringUtils.hasLength(brand.getName())) {
+            categoryBrandRelationService.updateBrand(brand.getBrandId(), brand.getName());
+
+            // TODO: 更新其他关联
+        }
     }
 
 }

@@ -53,8 +53,7 @@ public class CategoryBrandRelationController {
      */
     @PostMapping("/save")
     public Result save(@RequestBody CategoryBrandRelationEntity categoryBrandRelation){
-		categoryBrandRelationService.save(categoryBrandRelation);
-
+		categoryBrandRelationService.saveDetail(categoryBrandRelation);
         return Result.ok();
     }
 

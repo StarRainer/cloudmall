@@ -59,7 +59,7 @@ public class CategoryController {
      */
     @PutMapping("/update")
     public Result update(@RequestBody CategoryEntity category){
-		categoryService.updateById(category);
+		categoryService.updateCascade(category);
         return Result.ok();
     }
 

@@ -4,7 +4,6 @@ import com.rainer.cloudmall.common.exception.valid.AddGroup;
 import com.rainer.cloudmall.common.exception.valid.UpdateGroup;
 import com.rainer.cloudmall.product.entity.BrandEntity;
 import com.rainer.cloudmall.product.service.BrandService;
-import com.rainer.cloudmall.common.utils.PageUtils;
 import com.rainer.cloudmall.common.utils.Result;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -63,7 +62,7 @@ public class BrandController {
      */
     @PutMapping("/update")
     public Result update(@Validated(UpdateGroup.class) @RequestBody BrandEntity brand){
-		brandService.updateById(brand);
+		brandService.updateCascade(brand);
         return Result.ok();
     }
 
