@@ -1,19 +1,13 @@
 package com.rainer.cloudmall.product.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
+import com.rainer.cloudmall.common.utils.PageUtils;
 import com.rainer.cloudmall.common.utils.Result;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.rainer.cloudmall.product.entity.AttrGroupEntity;
 import com.rainer.cloudmall.product.service.AttrGroupService;
-import com.rainer.cloudmall.common.utils.PageUtils;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.Map;
 
 
 /**
@@ -26,18 +20,18 @@ import com.rainer.cloudmall.common.utils.PageUtils;
 @RestController
 @RequestMapping("product/attrgroup")
 public class AttrGroupController {
-    @Autowired
-    private AttrGroupService attrGroupService;
+    private final AttrGroupService attrGroupService;
+
+    public AttrGroupController(AttrGroupService attrGroupService) {
+        this.attrGroupService = attrGroupService;
+    }
 
     /**
      * 列表
      */
-    @RequestMapping("/list")
-//    @RequiresPermissions("product:attrgroup:list")
-    public Result list(@RequestParam Map<String, Object> params){
-        PageUtils page = attrGroupService.queryPage(params);
-
-        return Result.ok().put("page", page);
+    @RequestMapping("/list/{catelogId}")
+    public Result list(@RequestParam Map<String, Object> params, @PathVariable("catelogId") Long catelogId) {
+        return Result.ok().put("page", attrGroupService.queryPage(params, catelogId));
     }
 
 
