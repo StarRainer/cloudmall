@@ -1,11 +1,12 @@
 package com.rainer.cloudmall.product.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
-import lombok.Data;
+import java.util.List;
 
 /**
  * 属性分组
@@ -45,4 +46,9 @@ public class AttrGroupEntity implements Serializable {
 	 */
 	private Long catelogId;
 
+	/**
+	 * 三级分类路径
+	 */
+	@TableField(exist = false)
+	private List<Long> catelogPath;
 }

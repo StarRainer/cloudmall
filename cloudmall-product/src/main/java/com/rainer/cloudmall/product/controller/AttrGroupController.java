@@ -4,6 +4,7 @@ import com.rainer.cloudmall.common.utils.PageUtils;
 import com.rainer.cloudmall.common.utils.Result;
 import com.rainer.cloudmall.product.entity.AttrGroupEntity;
 import com.rainer.cloudmall.product.service.AttrGroupService;
+import com.rainer.cloudmall.product.service.CategoryService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -22,8 +23,11 @@ import java.util.Map;
 public class AttrGroupController {
     private final AttrGroupService attrGroupService;
 
-    public AttrGroupController(AttrGroupService attrGroupService) {
+    private final CategoryService categoryService;
+
+    public AttrGroupController(AttrGroupService attrGroupService, CategoryService categoryService) {
         this.attrGroupService = attrGroupService;
+        this.categoryService = categoryService;
     }
 
     /**
@@ -39,10 +43,9 @@ public class AttrGroupController {
      * 信息
      */
     @RequestMapping("/info/{attrGroupId}")
-//    @RequiresPermissions("product:attrgroup:info")
     public Result info(@PathVariable("attrGroupId") Long attrGroupId){
 		AttrGroupEntity attrGroup = attrGroupService.getById(attrGroupId);
-
+        attrGroup.setCatelogPath(categoryService.getPathLink(attrGroup.getCatelogId()));
         return Result.ok().put("attrGroup", attrGroup);
     }
 
