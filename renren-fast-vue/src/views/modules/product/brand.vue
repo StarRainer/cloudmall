@@ -149,7 +149,7 @@ export default {
     deleteCateRelationHandle(id, brandId) {
       this.$http({
         url: this.$http.adornUrl("/product/categorybrandrelation/delete"),
-        method: "post",
+        method: "delete",
         data: this.$http.adornData([id], false)
       }).then(({ data }) => {
         this.getCateRelation();
@@ -199,7 +199,7 @@ export default {
       //发送请求修改状态
       this.$http({
         url: this.$http.adornUrl("/product/brand/update/status"),
-        method: "post",
+        method: "put",
         data: this.$http.adornData({ brandId, showStatus }, false)
       }).then(({ data }) => {
         this.$message({
@@ -248,7 +248,7 @@ export default {
       ).then(() => {
         this.$http({
           url: this.$http.adornUrl("/product/brand/delete"),
-          method: "post",
+          method: "delete",
           data: this.$http.adornData(ids, false)
         }).then(({ data }) => {
           if (data && data.code === 200) {

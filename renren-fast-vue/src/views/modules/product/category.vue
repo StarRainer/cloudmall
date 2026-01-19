@@ -116,7 +116,7 @@ export default {
             }).then(() => {
                 this.$http({
                     url: this.$http.adornUrl('/product/category/delete'),
-                    method: 'post',
+                    method: 'delete',
                     data: this.$http.adornData(ids, false)
                 }).then(({ data }) => {
                     if (data.code === 200) {
@@ -186,7 +186,7 @@ export default {
 
             this.$http({
                 url: this.$http.adornUrl('/product/category/update'),
-                method: 'post',
+                method: 'put',
                 data: this.$http.adornData({ catId, name, icon, productUnit }, false)
             }).then(({ data }) => {
                 if (data.code === 200) {
@@ -275,7 +275,7 @@ export default {
             // 发送请求给后端
             this.$http({
                 url: this.$http.adornUrl('/product/category/update/batch'),
-                method: 'post',
+                method: 'put',
                 data: this.$http.adornData(this.updateNodes, false)
             }).then(({ data }) => {
                 if (data.code === 200) {
@@ -330,7 +330,7 @@ export default {
 
                 this.$http({
                     url: this.$http.adornUrl('/product/category/delete'),
-                    method: 'post',
+                    method: 'delete',
                     data: this.$http.adornData(keys, false)
                 }).then(({ data }) => {
                     if (data.code === 200) {

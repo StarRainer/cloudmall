@@ -33,7 +33,7 @@ public class AttrGroupController {
     /**
      * 列表
      */
-    @RequestMapping("/list/{catelogId}")
+    @GetMapping("/list/{catelogId}")
     public Result list(@RequestParam Map<String, Object> params, @PathVariable("catelogId") Long catelogId) {
         return Result.ok().put("page", attrGroupService.queryPage(params, catelogId));
     }
@@ -42,7 +42,7 @@ public class AttrGroupController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{attrGroupId}")
+    @GetMapping("/info/{attrGroupId}")
     public Result info(@PathVariable("attrGroupId") Long attrGroupId){
 		AttrGroupEntity attrGroup = attrGroupService.getById(attrGroupId);
         attrGroup.setCatelogPath(categoryService.getPathLink(attrGroup.getCatelogId()));
@@ -52,8 +52,7 @@ public class AttrGroupController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
-//    @RequiresPermissions("product:attrgroup:save")
+    @PostMapping("/save")
     public Result save(@RequestBody AttrGroupEntity attrGroup){
 		attrGroupService.save(attrGroup);
 
@@ -63,8 +62,7 @@ public class AttrGroupController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
-//    @RequiresPermissions("product:attrgroup:update")
+    @PutMapping("/update")
     public Result update(@RequestBody AttrGroupEntity attrGroup){
 		attrGroupService.updateById(attrGroup);
 
@@ -74,8 +72,7 @@ public class AttrGroupController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
-//    @RequiresPermissions("product:attrgroup:delete")
+    @DeleteMapping("/delete")
     public Result delete(@RequestBody Long[] attrGroupIds){
 		attrGroupService.removeByIds(Arrays.asList(attrGroupIds));
 

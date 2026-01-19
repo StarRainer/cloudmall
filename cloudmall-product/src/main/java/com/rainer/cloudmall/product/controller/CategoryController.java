@@ -3,10 +3,7 @@ package com.rainer.cloudmall.product.controller;
 import com.rainer.cloudmall.product.entity.CategoryEntity;
 import com.rainer.cloudmall.product.service.CategoryService;
 import com.rainer.cloudmall.common.utils.Result;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,7 +29,7 @@ public class CategoryController {
     /**
      * 查出所有分类及其子分类信息，以树形结构组装起来
      */
-    @RequestMapping("/list/tree")
+    @GetMapping("/list/tree")
     public Result list(){
         List<CategoryEntity> categoryEntities = categoryService.listWithTree();
         return Result.ok().put("data", categoryEntities);
@@ -42,7 +39,7 @@ public class CategoryController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{catId}")
+    @GetMapping("/info/{catId}")
     public Result info(@PathVariable("catId") Long catId){
 		CategoryEntity category = categoryService.getById(catId);
         return Result.ok().put("data", category);
@@ -51,7 +48,7 @@ public class CategoryController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @PostMapping("/save")
     public Result save(@RequestBody CategoryEntity category){
 		categoryService.save(category);
         return Result.ok();
@@ -60,8 +57,7 @@ public class CategoryController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
-//    @RequiresPermissions("product:category:update")
+    @PutMapping("/update")
     public Result update(@RequestBody CategoryEntity category){
 		categoryService.updateById(category);
         return Result.ok();
@@ -70,7 +66,7 @@ public class CategoryController {
     /**
      * 批量修改
      */
-    @RequestMapping("/update/batch")
+    @PutMapping("/update/batch")
     public Result updateBatch(@RequestBody CategoryEntity[] categoryEntities) {
         categoryService.updateBatchById(Arrays.asList(categoryEntities));
         return Result.ok();
@@ -79,7 +75,7 @@ public class CategoryController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @DeleteMapping("/delete")
     public Result delete(@RequestBody Long[] catIds){
 		categoryService.removeMenusByIds(Arrays.asList(catIds));
         return Result.ok();

@@ -140,7 +140,7 @@ export default {
             url: this.$http.adornUrl(
               `/product/brand/${!this.dataForm.brandId ? "save" : "update"}`
             ),
-            method: "post",
+            method: "put",
             data: this.$http.adornData({
               brandId: this.dataForm.brandId || undefined,
               name: this.dataForm.name,

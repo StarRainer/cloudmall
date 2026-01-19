@@ -5,11 +5,7 @@ import java.util.Map;
 
 import com.rainer.cloudmall.common.utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.rainer.cloudmall.product.entity.CategoryBrandRelationEntity;
 import com.rainer.cloudmall.product.service.CategoryBrandRelationService;
@@ -36,20 +32,16 @@ public class CategoryBrandRelationController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
-//    @RequiresPermissions("product:categorybrandrelation:list")
-    public Result list(@RequestParam Map<String, Object> params){
-        PageUtils page = categoryBrandRelationService.queryPage(params);
-
-        return Result.ok().put("page", page);
+    @GetMapping("/catelog/list")
+    public Result list(@RequestParam("brandId") Long brandId) {
+        return Result.ok().put("data", categoryBrandRelationService.listCateLog(brandId));
     }
 
 
     /**
      * 信息
      */
-    @RequestMapping("/info/{id}")
-//    @RequiresPermissions("product:categorybrandrelation:info")
+    @GetMapping("/info/{id}")
     public Result info(@PathVariable("id") Long id){
 		CategoryBrandRelationEntity categoryBrandRelation = categoryBrandRelationService.getById(id);
 
@@ -59,8 +51,7 @@ public class CategoryBrandRelationController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
-//    @RequiresPermissions("product:categorybrandrelation:save")
+    @PostMapping("/save")
     public Result save(@RequestBody CategoryBrandRelationEntity categoryBrandRelation){
 		categoryBrandRelationService.save(categoryBrandRelation);
 
@@ -70,8 +61,7 @@ public class CategoryBrandRelationController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
-//    @RequiresPermissions("product:categorybrandrelation:update")
+    @PutMapping("/update")
     public Result update(@RequestBody CategoryBrandRelationEntity categoryBrandRelation){
 		categoryBrandRelationService.updateById(categoryBrandRelation);
 
@@ -81,8 +71,7 @@ public class CategoryBrandRelationController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
-//    @RequiresPermissions("product:categorybrandrelation:delete")
+    @DeleteMapping("/delete")
     public Result delete(@RequestBody Long[] ids){
 		categoryBrandRelationService.removeByIds(Arrays.asList(ids));
 
