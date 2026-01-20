@@ -4,6 +4,7 @@ import com.rainer.cloudmall.common.utils.PageUtils;
 import com.rainer.cloudmall.common.utils.Result;
 import com.rainer.cloudmall.product.entity.AttrEntity;
 import com.rainer.cloudmall.product.service.AttrService;
+import com.rainer.cloudmall.product.vo.AttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,17 +22,18 @@ import java.util.Map;
 @RestController
 @RequestMapping("product/attr")
 public class AttrController {
-    @Autowired
-    private AttrService attrService;
+    private final AttrService attrService;
+
+    public AttrController(AttrService attrService) {
+        this.attrService = attrService;
+    }
 
     /**
      * 列表
      */
-    @RequestMapping("/list")
-//    @RequiresPermissions("product:attr:list")
-    public Result list(@RequestParam Map<String, Object> params){
-        PageUtils page = attrService.queryPage(params);
-
+    @GetMapping("/base/list/{attrId}")
+    public Result list(@RequestParam Map<String, Object> params, @PathVariable("attrId") Long attrId) {
+        PageUtils page = attrService.queryPage(params, attrId);
         return Result.ok().put("page", page);
     }
 
@@ -51,10 +53,8 @@ public class AttrController {
      * 保存
      */
     @RequestMapping("/save")
-//    @RequiresPermissions("product:attr:save")
-    public Result save(@RequestBody AttrEntity attr){
-		attrService.save(attr);
-
+    public Result save(@RequestBody AttrVo attrVo){
+		attrService.saveAttr(attrVo);
         return Result.ok();
     }
 
