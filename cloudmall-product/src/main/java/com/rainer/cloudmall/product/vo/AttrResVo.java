@@ -2,8 +2,10 @@ package com.rainer.cloudmall.product.vo;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
-public class AttrShowVo {
+public class AttrResVo {
     /**
      * 属性id
      */
@@ -37,9 +39,18 @@ public class AttrShowVo {
      */
     private Long enable;
     /**
+     * 所属分类
+     */
+    private Long catelogId;
+    /**
      * 快速展示【是否展示在介绍上；0-否 1-是】，在sku中仍然可以调整
      */
     private Integer showDesc;
+
+    /**
+     * 所对应的分组ID
+     */
+    private Long attrGroupId;
 
     /**
      * 所属分类
@@ -50,4 +61,9 @@ public class AttrShowVo {
      * 所属分组
      */
     private String groupName;
+
+    /**
+     * 分类完整路径
+     */
+    private List<Long> catelogPath;
 }

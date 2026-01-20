@@ -4,6 +4,7 @@ import com.rainer.cloudmall.common.utils.PageUtils;
 import com.rainer.cloudmall.common.utils.Result;
 import com.rainer.cloudmall.product.entity.AttrEntity;
 import com.rainer.cloudmall.product.service.AttrService;
+import com.rainer.cloudmall.product.vo.AttrResVo;
 import com.rainer.cloudmall.product.vo.AttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -41,10 +42,9 @@ public class AttrController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{attrId}")
-//    @RequiresPermissions("product:attr:info")
+    @GetMapping("/info/{attrId}")
     public Result info(@PathVariable("attrId") Long attrId){
-		AttrEntity attr = attrService.getById(attrId);
+		AttrResVo attr = attrService.getAttrInfo(attrId);
 
         return Result.ok().put("attr", attr);
     }
@@ -52,7 +52,7 @@ public class AttrController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @PostMapping("/save")
     public Result save(@RequestBody AttrVo attrVo){
 		attrService.saveAttr(attrVo);
         return Result.ok();
@@ -61,9 +61,8 @@ public class AttrController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
-//    @RequiresPermissions("product:attr:update")
-    public Result update(@RequestBody AttrEntity attr){
+    @PutMapping("/update")
+    public Result update(@RequestBody AttrVo attr){
 		attrService.updateById(attr);
 
         return Result.ok();
@@ -72,10 +71,9 @@ public class AttrController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
-//    @RequiresPermissions("product:attr:delete")
+    @DeleteMapping("/delete")
     public Result delete(@RequestBody Long[] attrIds){
-		attrService.removeByIds(Arrays.asList(attrIds));
+		attrService.deleteAttr(Arrays.asList(attrIds));
 
         return Result.ok();
     }

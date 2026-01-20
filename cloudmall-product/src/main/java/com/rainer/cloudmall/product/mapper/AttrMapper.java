@@ -1,7 +1,7 @@
 package com.rainer.cloudmall.product.mapper;
 
 import com.rainer.cloudmall.product.entity.AttrEntity;
-import com.rainer.cloudmall.product.vo.AttrShowVo;
+import com.rainer.cloudmall.product.vo.AttrResVo;
 import com.rainer.cloudmall.product.vo.AttrVo;
 import org.mapstruct.Mapper;
 
@@ -10,5 +10,5 @@ public interface AttrMapper {
 
     AttrEntity attrVoToAttrEntity(AttrVo attrVo);
 
-    AttrShowVo attrEntityToAttrShowVo(AttrEntity attrVo);
+    AttrResVo attrEntityToAttrShowVo(AttrEntity attrVo);
 }
