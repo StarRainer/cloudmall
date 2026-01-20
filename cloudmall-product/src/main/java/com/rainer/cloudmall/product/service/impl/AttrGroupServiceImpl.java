@@ -1,40 +1,32 @@
 package com.rainer.cloudmall.product.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.rainer.cloudmall.product.entity.AttrAttrgroupRelationEntity;
-import com.rainer.cloudmall.product.entity.AttrEntity;
-import com.rainer.cloudmall.product.service.AttrAttrgroupRelationService;
-import com.rainer.cloudmall.product.service.AttrService;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rainer.cloudmall.common.utils.PageUtils;
 import com.rainer.cloudmall.common.utils.Query;
-
 import com.rainer.cloudmall.product.dao.AttrGroupDao;
+import com.rainer.cloudmall.product.entity.AttrAttrgroupRelationEntity;
+import com.rainer.cloudmall.product.entity.AttrEntity;
 import com.rainer.cloudmall.product.entity.AttrGroupEntity;
+import com.rainer.cloudmall.product.service.AttrAttrgroupRelationService;
 import com.rainer.cloudmall.product.service.AttrGroupService;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
+import java.util.Map;
 
 
 @Service("attrGroupService")
 public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEntity> implements AttrGroupService {
 
-
     private final AttrAttrgroupRelationService attrAttrgroupRelationService;
 
-    private final AttrService attrService;
-
-    @Lazy
-    public AttrGroupServiceImpl(AttrAttrgroupRelationService attrAttrgroupRelationService, AttrService attrService) {
+    public AttrGroupServiceImpl(AttrAttrgroupRelationService attrAttrgroupRelationService) {
         this.attrAttrgroupRelationService = attrAttrgroupRelationService;
-        this.attrService = attrService;
     }
 
     @Override
@@ -72,7 +64,7 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
         List<Long> attrIds = attrAttrgroupRelationEntities.stream()
                 .map(AttrAttrgroupRelationEntity::getAttrId)
                 .toList();
-        return attrService.listByIds(attrIds);
+        return attrAttrgroupRelationService.listAttrByAttrGroupIds(attrIds);
     }
 
 }

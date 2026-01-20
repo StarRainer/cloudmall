@@ -14,7 +14,6 @@ import com.rainer.cloudmall.product.entity.AttrGroupEntity;
 import com.rainer.cloudmall.product.entity.CategoryEntity;
 import com.rainer.cloudmall.product.mapper.AttrMapper;
 import com.rainer.cloudmall.product.service.AttrAttrgroupRelationService;
-import com.rainer.cloudmall.product.service.AttrGroupService;
 import com.rainer.cloudmall.product.service.AttrService;
 import com.rainer.cloudmall.product.service.CategoryService;
 import com.rainer.cloudmall.product.vo.AttrResVo;
@@ -30,19 +29,15 @@ import java.util.Map;
 @Service("attrService")
 public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements AttrService {
 
-    private final AttrGroupService attrGroupService;
-
     private final CategoryService categoryService;
 
     private final AttrAttrgroupRelationService attrAttrgroupRelationService;
 
     private final AttrMapper attrMapper;
 
-    public AttrServiceImpl(AttrGroupService attrGroupService,
-                           CategoryService categoryService,
+    public AttrServiceImpl(CategoryService categoryService,
                            AttrAttrgroupRelationService attrAttrgroupRelationService,
                            AttrMapper attrMapper) {
-        this.attrGroupService = attrGroupService;
         this.categoryService = categoryService;
         this.attrAttrgroupRelationService = attrAttrgroupRelationService;
         this.attrMapper = attrMapper;
@@ -85,7 +80,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
                             );
                     if (attrAttrgroupRelationEntity != null) {
                         Long attrGroupId = attrAttrgroupRelationEntity.getAttrGroupId();
-                        AttrGroupEntity attrGroupEntity = attrGroupService.getById(attrGroupId);
+                        AttrGroupEntity attrGroupEntity = attrAttrgroupRelationService.getAttrGroupByAttrGroupId(attrGroupId);
                         if (attrGroupEntity != null) {
                             attrResVo.setGroupName(attrGroupEntity.getAttrGroupName());
                         }
@@ -125,7 +120,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         if (attrAttrgroupRelationEntity != null) {
             Long groupId = attrAttrgroupRelationEntity.getAttrGroupId();
             attrResVo.setAttrGroupId(groupId);
-            AttrGroupEntity attrGroupEntity = attrGroupService.getById(groupId);
+            AttrGroupEntity attrGroupEntity = attrAttrgroupRelationService.getAttrGroupByAttrGroupId(groupId);
             if (attrGroupEntity != null) {
                 attrResVo.setGroupName(attrGroupEntity.getAttrGroupName());
             }
