@@ -79,4 +79,11 @@ public class AttrGroupController {
         return Result.ok();
     }
 
+    /**
+     * 根据组名查属性
+     */
+    @GetMapping("/{attrgroupId}/attr/relation")
+    public Result attrRelation(@PathVariable("attrgroupId") Long attrGroupId){
+        return Result.ok().put("data", attrGroupService.getAttr(attrGroupId));
+    }
 }

@@ -19,6 +19,7 @@ import com.rainer.cloudmall.product.service.AttrService;
 import com.rainer.cloudmall.product.service.CategoryService;
 import com.rainer.cloudmall.product.vo.AttrResVo;
 import com.rainer.cloudmall.product.vo.AttrVo;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
