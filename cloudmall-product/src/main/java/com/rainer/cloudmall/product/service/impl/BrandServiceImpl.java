@@ -16,6 +16,7 @@ import java.util.Map;
 
 
 @Service("brandService")
+@Transactional(rollbackFor = Exception.class, readOnly = true)
 public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> implements BrandService {
     private final CategoryBrandRelationServiceImpl categoryBrandRelationService;
 
@@ -39,8 +40,8 @@ public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> impleme
         return new PageUtils(page);
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateCascade(BrandEntity brand) {
         updateById(brand);
         if (StringUtils.hasLength(brand.getName())) {

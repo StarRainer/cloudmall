@@ -21,10 +21,10 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 
 @Service("attrGroupService")
+@Transactional(rollbackFor = Exception.class, readOnly = true)
 public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEntity> implements AttrGroupService {
 
     private final AttrAttrgroupRelationService attrAttrgroupRelationService;
@@ -64,7 +64,6 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class, readOnly = true)
     public List<AttrEntity> getAttr(Long attrGroupId) {
         List<AttrAttrgroupRelationEntity> attrAttrgroupRelationEntities = attrAttrgroupRelationService
                 .list(new LambdaQueryWrapper<AttrAttrgroupRelationEntity>()
@@ -86,7 +85,6 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class, readOnly = true)
     public PageUtils getAttrWithNoRelation(Map<String, Object> params, Long attrGroupId) {
         AttrGroupEntity attrGroupEntity = getById(attrGroupId);
         // 目标属性 = 当前分类下的所有属性 - 已经被当前分类下的分组占用的属性

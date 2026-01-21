@@ -15,15 +15,16 @@ import com.rainer.cloudmall.product.entity.AttrEntity;
 import com.rainer.cloudmall.product.entity.AttrGroupEntity;
 import com.rainer.cloudmall.product.service.AttrAttrgroupRelationService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 
 @Service("attrAttrgroupRelationService")
+@Transactional(rollbackFor = Exception.class, readOnly = true)
 public class AttrAttrgroupRelationServiceImpl extends ServiceImpl<AttrAttrgroupRelationDao, AttrAttrgroupRelationEntity> implements AttrAttrgroupRelationService {
 
     private final AttrDao attrDao;
@@ -50,7 +51,7 @@ public class AttrAttrgroupRelationServiceImpl extends ServiceImpl<AttrAttrgroupR
 
     @Override
     public List<AttrEntity> listAttrByAttrGroupIds(List<Long> attrIds) {
-        return attrIds.isEmpty() ? Collections.emptyList() : attrDao.selectByIds(attrIds);
+        return CollectionUtils.isEmpty(attrIds) ? Collections.emptyList() : attrDao.selectByIds(attrIds);
     }
 
     @Override
@@ -59,6 +60,7 @@ public class AttrAttrgroupRelationServiceImpl extends ServiceImpl<AttrAttrgroupR
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void removeByAttrIdsAndAttrGroupIds(List<AttrAttrgroupRelationEntity> attrAttrgroupRelationEntities) {
         attrAttrgroupRelationDao.deleteBatchRelation(attrAttrgroupRelationEntities);
     }

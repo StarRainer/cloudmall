@@ -20,6 +20,7 @@ import java.util.Map;
 
 
 @Service("categoryService")
+@Transactional(rollbackFor = Exception.class, readOnly = true)
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
 
     private final CategoryBrandRelationService categoryBrandRelationService;
@@ -58,6 +59,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void removeMenusByIds(List<Long> catIds) {
         // TODO: 如果有子节点没有被删除，不能删除当前节点
         removeByIds(catIds);

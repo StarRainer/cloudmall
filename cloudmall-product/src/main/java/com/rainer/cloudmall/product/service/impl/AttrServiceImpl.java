@@ -27,6 +27,7 @@ import java.util.Map;
 
 
 @Service("attrService")
+@Transactional(rollbackFor = Exception.class, readOnly = true)
 public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements AttrService {
 
     private final CategoryService categoryService;
@@ -44,7 +45,6 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class, readOnly = true)
     public PageUtils queryPage(Map<String, Object> params, Long cateLogId, String attrType) {
         String key = (String) params.get("key");
         boolean isNumber = key != null && key.matches("^\\d+$");
@@ -108,7 +108,6 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class, readOnly = true)
     public AttrResVo getAttrInfo(Long attrId) {
         AttrEntity attrEntity = getById(attrId);
         AttrResVo attrResVo = attrMapper.attrEntityToAttrResVo(attrEntity);

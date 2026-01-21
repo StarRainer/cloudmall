@@ -11,11 +11,13 @@ import com.rainer.cloudmall.product.entity.CategoryBrandRelationEntity;
 import com.rainer.cloudmall.product.entity.CategoryEntity;
 import com.rainer.cloudmall.product.service.CategoryBrandRelationService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 
 @Service("categoryBrandRelationService")
+@Transactional(rollbackFor = Exception.class, readOnly = true)
 public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandRelationDao, CategoryBrandRelationEntity> implements CategoryBrandRelationService {
 
     private final BrandDao brandDao;
@@ -34,6 +36,7 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void saveDetail(CategoryBrandRelationEntity categoryBrandRelation) {
         BrandEntity brandEntity = brandDao.selectById(categoryBrandRelation.getBrandId());
         CategoryEntity categoryEntity = categoryDao.selectById(categoryBrandRelation.getCatelogId());
@@ -43,6 +46,7 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateBrand(Long brandId, String name) {
         CategoryBrandRelationEntity categoryBrandRelationEntity = new CategoryBrandRelationEntity();
         categoryBrandRelationEntity.setBrandId(brandId);
@@ -54,6 +58,7 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateCategory(Long catId, String name) {
         CategoryBrandRelationEntity categoryBrandRelationEntity = new CategoryBrandRelationEntity();
         categoryBrandRelationEntity.setCatelogId(catId);
