@@ -68,7 +68,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
                 .stream()
                 .map(attrEntity -> {
                     // 映射到 VO
-                    AttrResVo attrResVo = attrMapper.attrEntityToAttrShowVo(attrEntity);
+                    AttrResVo attrResVo = attrMapper.attrEntityToAttrResVo(attrEntity);
 
                     // 获取所属分类
                     attrResVo.setCatelogName(categoryService.getById(attrEntity.getCatelogId()).getName());
@@ -111,7 +111,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
     @Transactional(rollbackFor = Exception.class, readOnly = true)
     public AttrResVo getAttrInfo(Long attrId) {
         AttrEntity attrEntity = getById(attrId);
-        AttrResVo attrResVo = attrMapper.attrEntityToAttrShowVo(attrEntity);
+        AttrResVo attrResVo = attrMapper.attrEntityToAttrResVo(attrEntity);
 
         // 获取属性组名和组ID
         AttrAttrgroupRelationEntity attrAttrgroupRelationEntity = attrAttrgroupRelationService.getOne(new LambdaQueryWrapper<AttrAttrgroupRelationEntity>()

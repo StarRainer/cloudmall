@@ -6,18 +6,22 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rainer.cloudmall.common.utils.PageUtils;
 import com.rainer.cloudmall.common.utils.Query;
+import com.rainer.cloudmall.product.dao.AttrAttrgroupRelationDao;
 import com.rainer.cloudmall.product.dao.AttrGroupDao;
 import com.rainer.cloudmall.product.entity.AttrAttrgroupRelationEntity;
 import com.rainer.cloudmall.product.entity.AttrEntity;
 import com.rainer.cloudmall.product.entity.AttrGroupEntity;
+import com.rainer.cloudmall.product.mapper.AttrMapper;
 import com.rainer.cloudmall.product.service.AttrAttrgroupRelationService;
 import com.rainer.cloudmall.product.service.AttrGroupService;
+import com.rainer.cloudmall.product.vo.AttrGroupRelationVo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service("attrGroupService")
@@ -25,8 +29,13 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
 
     private final AttrAttrgroupRelationService attrAttrgroupRelationService;
 
-    public AttrGroupServiceImpl(AttrAttrgroupRelationService attrAttrgroupRelationService) {
+    private final AttrMapper attrMapper;
+    private final AttrAttrgroupRelationDao attrAttrgroupRelationDao;
+
+    public AttrGroupServiceImpl(AttrAttrgroupRelationService attrAttrgroupRelationService, AttrMapper attrMapper, AttrAttrgroupRelationDao attrAttrgroupRelationDao) {
         this.attrAttrgroupRelationService = attrAttrgroupRelationService;
+        this.attrMapper = attrMapper;
+        this.attrAttrgroupRelationDao = attrAttrgroupRelationDao;
     }
 
     @Override
@@ -67,4 +76,33 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
         return attrAttrgroupRelationService.listAttrByAttrGroupIds(attrIds);
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteRelationWithAttr(List<AttrGroupRelationVo> attrGroupRelationVo) {
+        List<AttrAttrgroupRelationEntity> attrAttrgroupRelationEntities = attrGroupRelationVo.stream()
+                .map(attrMapper::attrGroupRelationVoToAttrAttrgroupRelationEntity)
+                .toList();
+        attrAttrgroupRelationService.removeByAttrIdsAndAttrGroupIds(attrAttrgroupRelationEntities);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, readOnly = true)
+    public PageUtils getAttrWithNoRelation(Map<String, Object> params, Long attrGroupId) {
+        AttrGroupEntity attrGroupEntity = getById(attrGroupId);
+        // 目标属性 = 当前分类下的所有属性 - 已经被当前分类下的分组占用的属性
+        // 必须是 SPU 属性
+        Long catelogId = attrGroupEntity.getCatelogId();
+
+        // 1. 查询当前分类下的groupIds
+        List<Long> groupIds = list(new LambdaQueryWrapper<AttrGroupEntity>()
+                .select(AttrGroupEntity::getAttrGroupId)
+                .eq(AttrGroupEntity::getCatelogId, catelogId)
+        ).stream().map(AttrGroupEntity::getAttrGroupId).toList();
+
+        // 2. 查询groupIds占用的attrIds
+        List<Long> attrIds = attrAttrgroupRelationService.getOccupiedAttrIds(groupIds);
+
+        // 3. 查询不在attrIds的 SPU 属性
+        return attrAttrgroupRelationService.getSPUPageExcludeByAttrId(params, catelogId, attrIds);
+    }
 }

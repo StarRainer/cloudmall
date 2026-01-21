@@ -23,5 +23,11 @@ public interface AttrAttrgroupRelationService extends IService<AttrAttrgroupRela
     List<AttrEntity> listAttrByAttrGroupIds(List<Long> attrIds);
 
     AttrGroupEntity getAttrGroupByAttrGroupId(Long attrGroupId);
+
+    void removeByAttrIdsAndAttrGroupIds(List<AttrAttrgroupRelationEntity> attrAttrgroupRelationEntities);
+
+    List<Long> getOccupiedAttrIds(List<Long> groupIds);
+
+    PageUtils getSPUPageExcludeByAttrId(Map<String, Object> params, Long catelogId, List<Long> attrIds);
 }
 
