@@ -32,5 +32,9 @@ public interface AttrAttrgroupRelationService extends IService<AttrAttrgroupRela
     void deleteRelationWithAttr(List<AttrGroupRelationVo> attrGroupRelationVo);
 
     void saveBatch(List<AttrGroupRelationVo> attrGroupRelationVos);
+
+    List<AttrAttrgroupRelationEntity> getAttrAttrGroupRelationsByAttrGroupIds(List<Long> attrGroupIds);
+
+    List<AttrEntity> getAttrsByAttrIds(List<Long> attrIds);
 }
 

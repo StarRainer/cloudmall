@@ -109,10 +109,28 @@ public class AttrAttrgroupRelationServiceImpl extends ServiceImpl<AttrAttrgroupR
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveBatch(List<AttrGroupRelationVo> attrGroupRelationVos) {
-        attrAttrgroupRelationDao.insert(attrGroupRelationVos.stream()
+        saveBatch(attrGroupRelationVos.stream()
                 .map(productMapper::attrGroupRelationVoToAttrAttrgroupRelationEntity)
                 .toList()
         );
+    }
+
+    @Override
+    public List<AttrAttrgroupRelationEntity> getAttrAttrGroupRelationsByAttrGroupIds(List<Long> attrGroupIds) {
+        if (CollectionUtils.isEmpty(attrGroupIds)) {
+            return Collections.emptyList();
+        }
+        return list(new LambdaQueryWrapper<AttrAttrgroupRelationEntity>()
+                .in(AttrAttrgroupRelationEntity::getAttrGroupId, attrGroupIds)
+        );
+    }
+
+    @Override
+    public List<AttrEntity> getAttrsByAttrIds(List<Long> attrIds) {
+        if (CollectionUtils.isEmpty(attrIds)) {
+            return Collections.emptyList();
+        }
+        return attrDao.selectByIds(attrIds);
     }
 
 }

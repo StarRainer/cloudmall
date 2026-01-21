@@ -7,6 +7,7 @@ import com.rainer.cloudmall.product.service.AttrAttrgroupRelationService;
 import com.rainer.cloudmall.product.service.AttrGroupService;
 import com.rainer.cloudmall.product.service.CategoryService;
 import com.rainer.cloudmall.product.vo.AttrGroupRelationVo;
+import com.rainer.cloudmall.product.vo.AttrGroupWithAttrsVo;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -117,5 +118,14 @@ public class AttrGroupController {
     public Result addRealtion(@RequestBody List<AttrGroupRelationVo> attrGroupRelationVos) {
         attrAttrgroupRelationService.saveBatch(attrGroupRelationVos);
         return Result.ok();
+    }
+
+    /**
+     * 获取分类下所有的属性分组
+     */
+    @GetMapping("/{catelogId}/withattr")
+    public Result getAttrGroupsWithAttrs(@PathVariable("catelogId") Long catelogId) {
+        List<AttrGroupWithAttrsVo> attrGroupWithAttrsVos = attrGroupService.getAttrGroupsWithAttrs(catelogId);
+        return Result.ok().put("data", attrGroupWithAttrsVos);
     }
 }
