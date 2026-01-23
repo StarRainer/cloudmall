@@ -26,17 +26,18 @@ import com.rainer.cloudmall.common.utils.PageUtils;
 @RestController
 @RequestMapping("ware/purchasedetail")
 public class PurchaseDetailController {
-    @Autowired
-    private PurchaseDetailService purchaseDetailService;
+    private final PurchaseDetailService purchaseDetailService;
+
+    public PurchaseDetailController(PurchaseDetailService purchaseDetailService) {
+        this.purchaseDetailService = purchaseDetailService;
+    }
 
     /**
      * 列表
      */
     @RequestMapping("/list")
-//    @RequiresPermissions("ware:purchasedetail:list")
     public Result list(@RequestParam Map<String, Object> params){
         PageUtils page = purchaseDetailService.queryPage(params);
-
         return Result.ok().put("page", page);
     }
 

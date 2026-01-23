@@ -27,17 +27,18 @@ import com.rainer.cloudmall.common.utils.Result;
 @RestController
 @RequestMapping("ware/waresku")
 public class WareSkuController {
-    @Autowired
-    private WareSkuService wareSkuService;
+    private final WareSkuService wareSkuService;
+
+    public WareSkuController(WareSkuService wareSkuService) {
+        this.wareSkuService = wareSkuService;
+    }
 
     /**
      * 列表
      */
     @RequestMapping("/list")
-//    @RequiresPermissions("ware:waresku:list")
     public Result list(@RequestParam Map<String, Object> params){
         PageUtils page = wareSkuService.queryPage(params);
-
         return Result.ok().put("page", page);
     }
 

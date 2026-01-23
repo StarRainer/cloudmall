@@ -5,11 +5,7 @@ import java.util.Map;
 
 import com.rainer.cloudmall.common.utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.rainer.cloudmall.ware.entity.PurchaseEntity;
 import com.rainer.cloudmall.ware.service.PurchaseService;
@@ -26,14 +22,23 @@ import com.rainer.cloudmall.common.utils.PageUtils;
 @RestController
 @RequestMapping("ware/purchase")
 public class PurchaseController {
-    @Autowired
-    private PurchaseService purchaseService;
+    private final PurchaseService purchaseService;
+
+    public PurchaseController(PurchaseService purchaseService) {
+        this.purchaseService = purchaseService;
+    }
+
+    @GetMapping("/unreceive/list")
+    public Result listUnreceivePruchase(@RequestParam Map<String, Object> params){
+        PageUtils page = purchaseService.queryUnreceivePurchasePage(params);
+
+        return Result.ok().put("page", page);
+    }
 
     /**
      * 列表
      */
     @RequestMapping("/list")
-//    @RequiresPermissions("ware:purchase:list")
     public Result list(@RequestParam Map<String, Object> params){
         PageUtils page = purchaseService.queryPage(params);
 
