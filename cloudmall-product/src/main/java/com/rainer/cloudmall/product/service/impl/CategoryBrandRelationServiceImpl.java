@@ -14,7 +14,9 @@ import com.rainer.cloudmall.product.utils.ProductMapper;
 import com.rainer.cloudmall.product.vo.BrandResVo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -79,6 +81,9 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
         List<Long> brandIds = list(new LambdaQueryWrapper<CategoryBrandRelationEntity>()
                 .eq(CategoryBrandRelationEntity::getCatelogId, catId)
         ).stream().map(CategoryBrandRelationEntity::getBrandId).toList();
+        if (CollectionUtils.isEmpty(brandIds)) {
+            return Collections.emptyList();
+        }
         return brandDao.selectByIds(brandIds).stream()
                 .map(productMapper::brandEntityToBrandResVo).toList();
     }

@@ -72,12 +72,32 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        IPage<SpuInfoEntity> page = this.page(
-                new Query<SpuInfoEntity>().getPage(params),
-                new QueryWrapper<SpuInfoEntity>()
-        );
+        String key = (String) params.get("key");
+        String catelogIdText = (String) params.get("catelogId");
+        String brandIdText = (String) params.get("brandId");
+        String status = (String) params.get("status");
 
-        return new PageUtils(page);
+        LambdaQueryWrapper<SpuInfoEntity> wrapper = new LambdaQueryWrapper<>();
+        if (StringUtils.hasLength(catelogIdText)) {
+            long cateLogId = Long.parseLong(catelogIdText);
+            wrapper.eq(cateLogId != 0, SpuInfoEntity::getCatalogId, cateLogId);
+        }
+        if (StringUtils.hasLength(brandIdText)) {
+            long brandId = Long.parseLong(brandIdText);
+            wrapper.eq(brandId != 0, SpuInfoEntity::getBrandId, brandId);
+        }
+        if (StringUtils.hasLength(status)) {
+            wrapper.eq(SpuInfoEntity::getPublishStatus, Integer.parseInt(status));
+        }
+        wrapper.and(key != null, w -> {
+            boolean isNumber = key != null && key.matches("^\\d+$");
+            if (isNumber) {
+                w.eq(SpuInfoEntity::getId, Long.parseLong(key));
+            }
+            w.or().like(SpuInfoEntity::getSpuName, key);
+        });
+
+        return new PageUtils(page(new Query<SpuInfoEntity>().getPage(params), wrapper));
     }
 
     @Override
