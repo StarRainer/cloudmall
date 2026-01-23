@@ -483,6 +483,7 @@ export default {
       })
         .then(({ data }) => {
           this.dataResp.memberLevels = data.page.list;
+          console.log("会员等级数据：", this.dataResp.memberLevels); // 建议添加这行调试
         })
         .catch(e => {
           console.log(e);
@@ -781,7 +782,8 @@ export default {
     }
   },
   //生命周期 - 创建完成（可以访问当前this实例）
-  created() {},
+  created() {
+  },
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {
     this.catPathSub = PubSub.subscribe("catPath", (msg, val) => {

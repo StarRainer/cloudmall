@@ -31,3 +31,7 @@ mybatis-plus:
       id-type: auto # 表的主键为自增主键
   configuration:
     map-underscore-to-camel-case: true # 开启驼峰命名转换
+logging:
+  level:
+    root: info
+    com.rainer.cloudmall: debug

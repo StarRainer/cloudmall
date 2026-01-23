@@ -1,19 +1,13 @@
 package com.rainer.cloudmall.member.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
+import com.rainer.cloudmall.common.utils.PageUtils;
 import com.rainer.cloudmall.common.utils.Result;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.rainer.cloudmall.member.entity.MemberLevelEntity;
 import com.rainer.cloudmall.member.service.MemberLevelService;
-import com.rainer.cloudmall.common.utils.PageUtils;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.Map;
 
 
 /**
@@ -26,17 +20,19 @@ import com.rainer.cloudmall.common.utils.PageUtils;
 @RestController
 @RequestMapping("member/memberlevel")
 public class MemberLevelController {
-    @Autowired
-    private MemberLevelService memberLevelService;
+
+    private final MemberLevelService memberLevelService;
+
+    public MemberLevelController(MemberLevelService memberLevelService) {
+        this.memberLevelService = memberLevelService;
+    }
 
     /**
      * 列表
      */
     @RequestMapping("/list")
-//    @RequiresPermissions("member:memberlevel:list")
     public Result list(@RequestParam Map<String, Object> params){
         PageUtils page = memberLevelService.queryPage(params);
-
         return Result.ok().put("page", page);
     }
 

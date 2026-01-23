@@ -13,7 +13,7 @@ import com.rainer.cloudmall.product.dao.AttrGroupDao;
 import com.rainer.cloudmall.product.entity.AttrAttrgroupRelationEntity;
 import com.rainer.cloudmall.product.entity.AttrEntity;
 import com.rainer.cloudmall.product.entity.AttrGroupEntity;
-import com.rainer.cloudmall.product.mapper.AttrMapper;
+import com.rainer.cloudmall.product.utils.ProductMapper;
 import com.rainer.cloudmall.product.service.AttrAttrgroupRelationService;
 import com.rainer.cloudmall.product.vo.AttrGroupRelationVo;
 import org.springframework.stereotype.Service;
@@ -35,18 +35,18 @@ public class AttrAttrgroupRelationServiceImpl extends ServiceImpl<AttrAttrgroupR
 
     private final AttrAttrgroupRelationDao attrAttrgroupRelationDao;
 
-    private final AttrMapper attrMapper;
+    private final ProductMapper productMapper;
 
     public AttrAttrgroupRelationServiceImpl(
             AttrDao attrDao,
             AttrGroupDao attrGroupDao,
             AttrAttrgroupRelationDao attrAttrgroupRelationDao,
-            AttrMapper attrMapper
+            ProductMapper productMapper
     ) {
         this.attrDao = attrDao;
         this.attrGroupDao = attrGroupDao;
         this.attrAttrgroupRelationDao = attrAttrgroupRelationDao;
-        this.attrMapper = attrMapper;
+        this.productMapper = productMapper;
     }
 
     @Override
@@ -101,7 +101,7 @@ public class AttrAttrgroupRelationServiceImpl extends ServiceImpl<AttrAttrgroupR
     @Transactional(rollbackFor = Exception.class)
     public void deleteRelationWithAttr(List<AttrGroupRelationVo> attrGroupRelationVo) {
         List<AttrAttrgroupRelationEntity> attrAttrgroupRelationEntities = attrGroupRelationVo.stream()
-                .map(attrMapper::attrGroupRelationVoToAttrAttrgroupRelationEntity)
+                .map(productMapper::attrGroupRealitonVoToAttrAttrgroupRelationEntity)
                 .toList();
         attrAttrgroupRelationDao.deleteBatchRelation(attrAttrgroupRelationEntities);
     }
@@ -109,10 +109,28 @@ public class AttrAttrgroupRelationServiceImpl extends ServiceImpl<AttrAttrgroupR
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveBatch(List<AttrGroupRelationVo> attrGroupRelationVos) {
-        attrAttrgroupRelationDao.insert(attrGroupRelationVos.stream()
-                .map(attrMapper::attrGroupRelationVoToAttrAttrgroupRelationEntity)
+        saveBatch(attrGroupRelationVos.stream()
+                .map(productMapper::attrGroupRealitonVoToAttrAttrgroupRelationEntity)
                 .toList()
         );
+    }
+
+    @Override
+    public List<AttrAttrgroupRelationEntity> getAttrAttrGroupRelationsByAttrGroupIds(List<Long> attrGroupIds) {
+        if (CollectionUtils.isEmpty(attrGroupIds)) {
+            return Collections.emptyList();
+        }
+        return list(new LambdaQueryWrapper<AttrAttrgroupRelationEntity>()
+                .in(AttrAttrgroupRelationEntity::getAttrGroupId, attrGroupIds)
+        );
+    }
+
+    @Override
+    public List<AttrEntity> getAttrsByAttrIds(List<Long> attrIds) {
+        if (CollectionUtils.isEmpty(attrIds)) {
+            return Collections.emptyList();
+        }
+        return attrDao.selectByIds(attrIds);
     }
 
 }

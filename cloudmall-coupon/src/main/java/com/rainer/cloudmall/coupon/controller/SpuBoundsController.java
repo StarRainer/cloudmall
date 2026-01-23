@@ -3,13 +3,10 @@ package com.rainer.cloudmall.coupon.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.rainer.cloudmall.common.to.SpuBoundsTo;
 import com.rainer.cloudmall.common.utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.rainer.cloudmall.coupon.entity.SpuBoundsEntity;
 import com.rainer.cloudmall.coupon.service.SpuBoundsService;
@@ -26,8 +23,11 @@ import com.rainer.cloudmall.common.utils.PageUtils;
 @RestController
 @RequestMapping("coupon/spubounds")
 public class SpuBoundsController {
-    @Autowired
-    private SpuBoundsService spuBoundsService;
+    private final SpuBoundsService spuBoundsService;
+
+    public SpuBoundsController(SpuBoundsService spuBoundsService) {
+        this.spuBoundsService = spuBoundsService;
+    }
 
     /**
      * 列表
@@ -55,11 +55,9 @@ public class SpuBoundsController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
-//    @RequiresPermissions("coupon:spubounds:save")
-    public Result save(@RequestBody SpuBoundsEntity spuBounds){
-		spuBoundsService.save(spuBounds);
-
+    @PostMapping("/save")
+    public Result save(@RequestBody SpuBoundsTo spuBoundsTo){
+		spuBoundsService.save(spuBoundsTo);
         return Result.ok();
     }
 

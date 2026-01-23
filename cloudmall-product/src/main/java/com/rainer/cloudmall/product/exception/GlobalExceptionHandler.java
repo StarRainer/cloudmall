@@ -1,11 +1,8 @@
 package com.rainer.cloudmall.product.exception;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.rainer.cloudmall.common.exception.code.ProductErrorCode;
+import com.rainer.cloudmall.common.exception.code.ProductResponseCode;
 import com.rainer.cloudmall.common.utils.Result;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,7 +11,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
@@ -27,8 +23,8 @@ public class GlobalExceptionHandler {
         Map<String, String> errorMap = new HashMap<>();
         bindingResult.getFieldErrors().forEach(fieldError -> errorMap.put(fieldError.getField(), fieldError.getDefaultMessage()));
         return Result.error(
-                ProductErrorCode.VALID_EXCEPTION.getCode(),
-                ProductErrorCode.VALID_EXCEPTION.getMessage()
+                ProductResponseCode.VALID_EXCEPTION.getCode(),
+                ProductResponseCode.VALID_EXCEPTION.getMessage()
         ).put("data", errorMap);
     }
 
@@ -36,8 +32,8 @@ public class GlobalExceptionHandler {
     public Result handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         log.warn("请求数据解析失败{}", e.getMessage(), e);
         return Result.error(
-                ProductErrorCode.REQUEST_PARSE_EXCEPTION.getCode(),
-                ProductErrorCode.REQUEST_PARSE_EXCEPTION.getMessage()
+                ProductResponseCode.REQUEST_PARSE_EXCEPTION.getCode(),
+                ProductResponseCode.REQUEST_PARSE_EXCEPTION.getMessage()
         );
     }
 
@@ -45,8 +41,8 @@ public class GlobalExceptionHandler {
     public Result handleException(Exception e) {
         log.error("系统出现未知异常{}", e.getMessage(), e);
         return Result.error(
-                ProductErrorCode.UNKNOWN_EXCEPTION.getCode(),
-                ProductErrorCode.UNKNOWN_EXCEPTION.getMessage()
+                ProductResponseCode.UNKNOWN_EXCEPTION.getCode(),
+                ProductResponseCode.UNKNOWN_EXCEPTION.getMessage()
         );
     }
 }

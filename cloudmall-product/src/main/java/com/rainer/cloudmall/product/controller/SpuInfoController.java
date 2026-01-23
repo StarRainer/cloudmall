@@ -1,19 +1,14 @@
 package com.rainer.cloudmall.product.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
+import com.rainer.cloudmall.common.utils.PageUtils;
 import com.rainer.cloudmall.common.utils.Result;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.rainer.cloudmall.product.entity.SpuInfoEntity;
 import com.rainer.cloudmall.product.service.SpuInfoService;
-import com.rainer.cloudmall.common.utils.PageUtils;
+import com.rainer.cloudmall.product.vo.SpuSaveVo;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.Map;
 
 
 /**
@@ -26,17 +21,19 @@ import com.rainer.cloudmall.common.utils.PageUtils;
 @RestController
 @RequestMapping("product/spuinfo")
 public class SpuInfoController {
-    @Autowired
-    private SpuInfoService spuInfoService;
+    private final SpuInfoService spuInfoService;
+
+
+    public SpuInfoController(SpuInfoService spuInfoService) {
+        this.spuInfoService = spuInfoService;
+    }
 
     /**
      * 列表
      */
     @RequestMapping("/list")
-//    @RequiresPermissions("product:spuinfo:list")
     public Result list(@RequestParam Map<String, Object> params){
         PageUtils page = spuInfoService.queryPage(params);
-
         return Result.ok().put("page", page);
     }
 
@@ -56,10 +53,8 @@ public class SpuInfoController {
      * 保存
      */
     @RequestMapping("/save")
-//    @RequiresPermissions("product:spuinfo:save")
-    public Result save(@RequestBody SpuInfoEntity spuInfo){
-		spuInfoService.save(spuInfo);
-
+    public Result save(@RequestBody SpuSaveVo spuSaveVo){
+		spuInfoService.save(spuSaveVo);
         return Result.ok();
     }
 

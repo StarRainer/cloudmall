@@ -1,6 +1,7 @@
 package com.rainer.cloudmall.coupon.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.rainer.cloudmall.common.to.SpuBoundsTo;
 import com.rainer.cloudmall.common.utils.PageUtils;
 import com.rainer.cloudmall.coupon.entity.SpuBoundsEntity;
 
@@ -16,5 +17,7 @@ import java.util.Map;
 public interface SpuBoundsService extends IService<SpuBoundsEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    void save(SpuBoundsTo spuBoundsTo);
 }
 

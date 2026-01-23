@@ -6,21 +6,24 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rainer.cloudmall.common.utils.PageUtils;
 import com.rainer.cloudmall.common.utils.Query;
-import com.rainer.cloudmall.product.dao.AttrAttrgroupRelationDao;
 import com.rainer.cloudmall.product.dao.AttrGroupDao;
 import com.rainer.cloudmall.product.entity.AttrAttrgroupRelationEntity;
 import com.rainer.cloudmall.product.entity.AttrEntity;
 import com.rainer.cloudmall.product.entity.AttrGroupEntity;
-import com.rainer.cloudmall.product.mapper.AttrMapper;
 import com.rainer.cloudmall.product.service.AttrAttrgroupRelationService;
 import com.rainer.cloudmall.product.service.AttrGroupService;
-import com.rainer.cloudmall.product.vo.AttrGroupRelationVo;
+import com.rainer.cloudmall.product.utils.ProductMapper;
+import com.rainer.cloudmall.product.vo.AttrGroupWithAttrsVo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 @Service("attrGroupService")
@@ -28,9 +31,11 @@ import java.util.Map;
 public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEntity> implements AttrGroupService {
 
     private final AttrAttrgroupRelationService attrAttrgroupRelationService;
+    private final ProductMapper productMapper;
 
-    public AttrGroupServiceImpl(AttrAttrgroupRelationService attrAttrgroupRelationService) {
+    public AttrGroupServiceImpl(AttrAttrgroupRelationService attrAttrgroupRelationService, ProductMapper productMapper) {
         this.attrAttrgroupRelationService = attrAttrgroupRelationService;
+        this.productMapper = productMapper;
     }
 
     @Override
@@ -90,5 +95,45 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
 
         // 3. 查询不在attrIds的 SPU 属性
         return attrAttrgroupRelationService.getSPUPageExcludeByAttrId(params, catelogId, attrIds);
+    }
+
+    @Override
+    public List<AttrGroupWithAttrsVo> getAttrGroupsWithAttrs(Long catelogId) {
+        List<AttrGroupWithAttrsVo> attrGroupWithAttrsVos = list(new LambdaQueryWrapper<AttrGroupEntity>()
+                .eq(AttrGroupEntity::getCatelogId, catelogId)
+        ).stream().map(productMapper::attrGroupEntityToAttrGroupWithAttrsVo).toList();
+
+        if (CollectionUtils.isEmpty(attrGroupWithAttrsVos)) {
+            return attrGroupWithAttrsVos;
+        }
+
+        List<Long> attrGroupIds = attrGroupWithAttrsVos.stream().map(AttrGroupWithAttrsVo::getAttrGroupId).toList();
+        List<AttrAttrgroupRelationEntity> attrAttrgroupRelationEntities = attrAttrgroupRelationService.getAttrAttrGroupRelationsByAttrGroupIds(attrGroupIds);
+
+        if (CollectionUtils.isEmpty(attrAttrgroupRelationEntities)) {
+            return attrGroupWithAttrsVos;
+        }
+
+        List<Long> attrIds = attrAttrgroupRelationEntities.stream().map(AttrAttrgroupRelationEntity::getAttrId).toList();
+        List<AttrEntity> attrEntities = attrAttrgroupRelationService.getAttrsByAttrIds(attrIds);
+
+        Map<Long, List<AttrAttrgroupRelationEntity>> attrGroupIdToAttrIds = attrAttrgroupRelationEntities.stream().collect(
+                Collectors.groupingBy(AttrAttrgroupRelationEntity::getAttrGroupId)
+        );
+        Map<Long, AttrEntity> attrIdToAttrEntity = attrEntities.stream().collect(Collectors.toMap(AttrEntity::getAttrId, Function.identity()));
+
+        attrGroupWithAttrsVos.forEach(attrGroupWithAttrsVo -> {
+            List<AttrAttrgroupRelationEntity> currentAttrAttrGroupEntities = attrGroupIdToAttrIds.get(attrGroupWithAttrsVo.getAttrGroupId());
+            if (CollectionUtils.isEmpty(currentAttrAttrGroupEntities)) {
+                return;
+            }
+            List<AttrEntity> resultAttrs = currentAttrAttrGroupEntities.stream()
+                    .map(attrattrGroupEntity -> attrIdToAttrEntity.get(attrattrGroupEntity.getAttrId()))
+                    .filter(Objects::nonNull)
+                    .toList();
+            attrGroupWithAttrsVo.setAttrs(resultAttrs);
+        });
+
+        return attrGroupWithAttrsVos;
     }
 }

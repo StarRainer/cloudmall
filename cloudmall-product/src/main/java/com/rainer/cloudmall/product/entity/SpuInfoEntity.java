@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.math.BigDecimal;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 import lombok.Data;
 
@@ -52,10 +53,10 @@ public class SpuInfoEntity implements Serializable {
 	/**
 	 * 
 	 */
-	private Date createTime;
+	private LocalDateTime createTime;
 	/**
 	 * 
 	 */
-	private Date updateTime;
+	private LocalDateTime updateTime;
 
 }

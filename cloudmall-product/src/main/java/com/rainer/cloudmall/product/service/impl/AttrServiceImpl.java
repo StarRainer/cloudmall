@@ -12,7 +12,7 @@ import com.rainer.cloudmall.product.entity.AttrAttrgroupRelationEntity;
 import com.rainer.cloudmall.product.entity.AttrEntity;
 import com.rainer.cloudmall.product.entity.AttrGroupEntity;
 import com.rainer.cloudmall.product.entity.CategoryEntity;
-import com.rainer.cloudmall.product.mapper.AttrMapper;
+import com.rainer.cloudmall.product.utils.ProductMapper;
 import com.rainer.cloudmall.product.service.AttrAttrgroupRelationService;
 import com.rainer.cloudmall.product.service.AttrService;
 import com.rainer.cloudmall.product.service.CategoryService;
@@ -34,14 +34,14 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
 
     private final AttrAttrgroupRelationService attrAttrgroupRelationService;
 
-    private final AttrMapper attrMapper;
+    private final ProductMapper productMapper;
 
     public AttrServiceImpl(CategoryService categoryService,
                            AttrAttrgroupRelationService attrAttrgroupRelationService,
-                           AttrMapper attrMapper) {
+                           ProductMapper productMapper) {
         this.categoryService = categoryService;
         this.attrAttrgroupRelationService = attrAttrgroupRelationService;
-        this.attrMapper = attrMapper;
+        this.productMapper = productMapper;
     }
 
     @Override
@@ -68,7 +68,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
                 .stream()
                 .map(attrEntity -> {
                     // 映射到 VO
-                    AttrResVo attrResVo = attrMapper.attrEntityToAttrResVo(attrEntity);
+                    AttrResVo attrResVo = productMapper.attrEntityToAttrResVo(attrEntity);
 
                     // 获取所属分类
                     attrResVo.setCatelogName(categoryService.getById(attrEntity.getCatelogId()).getName());
@@ -95,7 +95,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveAttr(AttrVo attrVo) {
-        AttrEntity attrEntity = attrMapper.attrVoToAttrEntity(attrVo);
+        AttrEntity attrEntity = productMapper.attrVoToAttrEntity(attrVo);
         save(attrEntity);
 
         Long groupId = attrVo.getCatelogId();
@@ -110,7 +110,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
     @Override
     public AttrResVo getAttrInfo(Long attrId) {
         AttrEntity attrEntity = getById(attrId);
-        AttrResVo attrResVo = attrMapper.attrEntityToAttrResVo(attrEntity);
+        AttrResVo attrResVo = productMapper.attrEntityToAttrResVo(attrEntity);
 
         // 获取属性组名和组ID
         AttrAttrgroupRelationEntity attrAttrgroupRelationEntity = attrAttrgroupRelationService.getOne(new LambdaQueryWrapper<AttrAttrgroupRelationEntity>()
@@ -141,7 +141,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateById(AttrVo attrVo) {
-        AttrEntity attrEntity = attrMapper.attrVoToAttrEntity(attrVo);
+        AttrEntity attrEntity = productMapper.attrVoToAttrEntity(attrVo);
         updateById(attrEntity);
 
         if (attrEntity.getAttrType() == ProductConstant.AttrType.SALE.getCode()) {

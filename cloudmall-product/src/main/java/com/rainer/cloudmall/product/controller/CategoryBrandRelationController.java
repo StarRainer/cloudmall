@@ -1,15 +1,13 @@
 package com.rainer.cloudmall.product.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
 import com.rainer.cloudmall.common.utils.Result;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import com.rainer.cloudmall.product.entity.CategoryBrandRelationEntity;
 import com.rainer.cloudmall.product.service.CategoryBrandRelationService;
-import com.rainer.cloudmall.common.utils.PageUtils;
+import com.rainer.cloudmall.product.vo.BrandResVo;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -77,4 +75,12 @@ public class CategoryBrandRelationController {
         return Result.ok();
     }
 
+    /**
+     * 获取分类下的所有品牌
+     */
+    @GetMapping("/brands/list")
+    public Result listBrands(@RequestParam("catId") Long catId) {
+        List<BrandResVo> brandResVos = categoryBrandRelationService.listBrandsByCatId(catId);
+        return Result.ok().put("data", brandResVos);
+    }
 }

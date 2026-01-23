@@ -1,19 +1,14 @@
 package com.rainer.cloudmall.product.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
+import com.rainer.cloudmall.common.utils.PageUtils;
 import com.rainer.cloudmall.common.utils.Result;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.rainer.cloudmall.product.entity.SkuInfoEntity;
 import com.rainer.cloudmall.product.service.SkuInfoService;
-import com.rainer.cloudmall.common.utils.PageUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.Map;
 
 
 /**
@@ -26,17 +21,18 @@ import com.rainer.cloudmall.common.utils.PageUtils;
 @RestController
 @RequestMapping("product/skuinfo")
 public class SkuInfoController {
-    @Autowired
-    private SkuInfoService skuInfoService;
+    private final SkuInfoService skuInfoService;
+
+    public SkuInfoController(SkuInfoService skuInfoService) {
+        this.skuInfoService = skuInfoService;
+    }
 
     /**
      * 列表
      */
     @RequestMapping("/list")
-//    @RequiresPermissions("product:skuinfo:list")
     public Result list(@RequestParam Map<String, Object> params){
         PageUtils page = skuInfoService.queryPage(params);
-
         return Result.ok().put("page", page);
     }
 

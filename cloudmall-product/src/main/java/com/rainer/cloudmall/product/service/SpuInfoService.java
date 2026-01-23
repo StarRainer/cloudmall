@@ -3,6 +3,7 @@ package com.rainer.cloudmall.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.rainer.cloudmall.common.utils.PageUtils;
 import com.rainer.cloudmall.product.entity.SpuInfoEntity;
+import com.rainer.cloudmall.product.vo.SpuSaveVo;
 
 import java.util.Map;
 
@@ -16,5 +17,7 @@ import java.util.Map;
 public interface SpuInfoService extends IService<SpuInfoEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    void save(SpuSaveVo spuSaveVo);
 }
 

@@ -1,19 +1,16 @@
 package com.rainer.cloudmall.coupon.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.rainer.cloudmall.coupon.entity.SkuFullReductionEntity;
-import com.rainer.cloudmall.coupon.service.SkuFullReductionService;
+import com.rainer.cloudmall.common.to.SkuReductionTo;
 import com.rainer.cloudmall.common.utils.PageUtils;
 import com.rainer.cloudmall.common.utils.Result;
+import com.rainer.cloudmall.coupon.entity.SkuFullReductionEntity;
+import com.rainer.cloudmall.coupon.service.SkuFullReductionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 
@@ -27,8 +24,17 @@ import com.rainer.cloudmall.common.utils.Result;
 @RestController
 @RequestMapping("coupon/skufullreduction")
 public class SkuFullReductionController {
-    @Autowired
-    private SkuFullReductionService skuFullReductionService;
+    private final SkuFullReductionService skuFullReductionService;
+
+    public SkuFullReductionController(SkuFullReductionService skuFullReductionService) {
+        this.skuFullReductionService = skuFullReductionService;
+    }
+
+    @PostMapping("/save/batch")
+    Result saveSkuReductions(@RequestBody List<SkuReductionTo> skuReductionTos) {
+        skuFullReductionService.saveSkuReductions(skuReductionTos);
+        return Result.ok();
+    }
 
     /**
      * 列表

@@ -1,9 +1,11 @@
 package com.rainer.cloudmall.coupon.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.rainer.cloudmall.common.to.SkuReductionTo;
 import com.rainer.cloudmall.common.utils.PageUtils;
 import com.rainer.cloudmall.coupon.entity.SkuFullReductionEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +18,7 @@ import java.util.Map;
 public interface SkuFullReductionService extends IService<SkuFullReductionEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    void saveSkuReductions(List<SkuReductionTo> skuReductionTos);
 }
 
