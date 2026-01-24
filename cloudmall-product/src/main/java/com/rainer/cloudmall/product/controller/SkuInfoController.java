@@ -1,5 +1,6 @@
 package com.rainer.cloudmall.product.controller;
 
+import com.rainer.cloudmall.common.utils.FeignResult;
 import com.rainer.cloudmall.common.utils.PageUtils;
 import com.rainer.cloudmall.common.utils.Result;
 import com.rainer.cloudmall.product.entity.SkuInfoEntity;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -25,6 +27,11 @@ public class SkuInfoController {
 
     public SkuInfoController(SkuInfoService skuInfoService) {
         this.skuInfoService = skuInfoService;
+    }
+
+    @PostMapping("/skuname")
+    FeignResult<Map<Long, String>> getSkuNamesBySkuIds(@RequestBody List<Long> skuIds) {
+        return FeignResult.success(skuInfoService.getSkuNamesBySkuIds(skuIds));
     }
 
     /**

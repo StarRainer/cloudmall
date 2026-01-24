@@ -12,6 +12,13 @@
         <result property="skuName" column="sku_name"/>
         <result property="stockLocked" column="stock_locked"/>
     </resultMap>
-
-
+    <insert id="addStock">
+        INSERT INTO wms_ware_sku (sku_id, ware_id, stock, sku_name, stock_locked)
+        VALUES
+            <foreach collection="wareSkuEntities" item="entity" separator=",">
+                (#{entity.skuId}, #{entity.wareId}, #{entity.stock}, #{entity.skuName}, #{entity.stockLocked})
+            </foreach>
+        ON DUPLICATE KEY UPDATE
+            stock = stock + VALUES(stock)
+    </insert>
 </mapper>

@@ -1,8 +1,12 @@
 package com.rainer.cloudmall.ware.dao;
 
+import com.rainer.cloudmall.ware.entity.PurchaseDetailEntity;
 import com.rainer.cloudmall.ware.entity.WareSkuEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 商品库存
@@ -13,5 +17,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface WareSkuDao extends BaseMapper<WareSkuEntity> {
-	
+
+    void addStock(@Param("wareSkuEntities") List<WareSkuEntity> wareSkuEntities);
 }

@@ -6,12 +6,17 @@ import com.rainer.cloudmall.common.utils.PageUtils;
 import com.rainer.cloudmall.common.utils.Query;
 import com.rainer.cloudmall.product.dao.SkuInfoDao;
 import com.rainer.cloudmall.product.entity.SkuInfoEntity;
+import com.rainer.cloudmall.product.entity.SpuInfoEntity;
 import com.rainer.cloudmall.product.service.SkuInfoService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service("skuInfoService")
@@ -59,4 +64,14 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
         return new PageUtils(page(new Query<SkuInfoEntity>().getPage(params), wrapper));
     }
 
+    @Override
+    public Map<Long, String> getSkuNamesBySkuIds(List<Long> skuIds) {
+        if (CollectionUtils.isEmpty(skuIds)) {
+            return Collections.emptyMap();
+        }
+        return list(new LambdaQueryWrapper<SkuInfoEntity>()
+                .select(SkuInfoEntity::getSkuId, SkuInfoEntity::getSkuName)
+                .in(SkuInfoEntity::getSkuId, skuIds)
+        ).stream().collect(Collectors.toMap(SkuInfoEntity::getSkuId, SkuInfoEntity::getSkuName));
+    }
 }

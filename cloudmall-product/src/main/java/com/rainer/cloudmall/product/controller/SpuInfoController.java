@@ -1,5 +1,6 @@
 package com.rainer.cloudmall.product.controller;
 
+import com.rainer.cloudmall.common.utils.FeignResult;
 import com.rainer.cloudmall.common.utils.PageUtils;
 import com.rainer.cloudmall.common.utils.Result;
 import com.rainer.cloudmall.product.entity.SpuInfoEntity;
@@ -7,7 +8,9 @@ import com.rainer.cloudmall.product.service.SpuInfoService;
 import com.rainer.cloudmall.product.vo.SpuSaveVo;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
