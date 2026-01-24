@@ -159,7 +159,7 @@ export default {
         .then(() => {
           this.$http({
             url: this.$http.adornUrl(`/product/attr/update/${this.spuId}`),
-            method: "post",
+            method: "put",
             data: this.$http.adornData(submitData, false)
           }).then(({ data }) => {
             this.$message({

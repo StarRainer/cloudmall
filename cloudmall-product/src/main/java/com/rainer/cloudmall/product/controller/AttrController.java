@@ -3,13 +3,17 @@ package com.rainer.cloudmall.product.controller;
 import com.rainer.cloudmall.common.utils.PageUtils;
 import com.rainer.cloudmall.common.utils.Result;
 import com.rainer.cloudmall.product.entity.AttrEntity;
+import com.rainer.cloudmall.product.entity.ProductAttrValueEntity;
 import com.rainer.cloudmall.product.service.AttrService;
+import com.rainer.cloudmall.product.service.ProductAttrValueService;
+import com.rainer.cloudmall.product.service.impl.ProductAttrValueServiceImpl;
 import com.rainer.cloudmall.product.vo.AttrResVo;
 import com.rainer.cloudmall.product.vo.AttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -24,9 +28,22 @@ import java.util.Map;
 @RequestMapping("product/attr")
 public class AttrController {
     private final AttrService attrService;
+    private final ProductAttrValueService productAttrValueService;
 
-    public AttrController(AttrService attrService) {
+    public AttrController(AttrService attrService, ProductAttrValueService productAttrValueService) {
         this.attrService = attrService;
+        this.productAttrValueService = productAttrValueService;
+    }
+
+    @GetMapping("/base/listforspu/{spuId}")
+    public Result baseAttrListForSPU(@PathVariable("spuId") Long spuId){
+        return Result.ok().put("data", productAttrValueService.listAttrBySpuId(spuId));
+    }
+
+    @PutMapping("/update/{spuId}")
+    public Result updateAttrsBySpuId(@PathVariable("spuId") Long spuId, @RequestBody List<ProductAttrValueEntity> productAttrValueEntities) {
+        productAttrValueService.updateAttrsBySpuId(spuId, productAttrValueEntities);
+        return Result.ok();
     }
 
     /**
