@@ -4,20 +4,26 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rainer.cloudmall.common.utils.PageUtils;
 import com.rainer.cloudmall.common.utils.Query;
+import com.rainer.cloudmall.product.constant.RedisConstants;
 import com.rainer.cloudmall.product.dao.CategoryDao;
 import com.rainer.cloudmall.product.entity.CategoryEntity;
 import com.rainer.cloudmall.product.service.CategoryBrandRelationService;
 import com.rainer.cloudmall.product.service.CategoryService;
 import com.rainer.cloudmall.product.utils.ProductMapper;
 import com.rainer.cloudmall.product.vo.Catelog2Vo;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -28,10 +34,14 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     private final CategoryBrandRelationService categoryBrandRelationService;
     private final ProductMapper productMapper;
+    private final StringRedisTemplate stringRedisTemplate;
+    private final ObjectMapper objectMapper;
 
-    public CategoryServiceImpl(CategoryBrandRelationService categoryBrandRelationService, ProductMapper productMapper) {
+    public CategoryServiceImpl(CategoryBrandRelationService categoryBrandRelationService, ProductMapper productMapper, StringRedisTemplate stringRedisTemplate, ObjectMapper objectMapper) {
         this.categoryBrandRelationService = categoryBrandRelationService;
         this.productMapper = productMapper;
+        this.stringRedisTemplate = stringRedisTemplate;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -110,6 +120,22 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Override
     public Map<String, List<Catelog2Vo>> getCatalogJson() {
+        String catalogJson = stringRedisTemplate.opsForValue().get(RedisConstants.CATALOG_JSON_CACHE_KEY);
+
+        if (StringUtils.hasLength(catalogJson)) {
+            Map<String, List<Catelog2Vo>> result = null;
+            try {
+                result = objectMapper.readValue(catalogJson, new TypeReference<Map<String, List<Catelog2Vo>>>(){});
+                return result;
+            } catch (JsonProcessingException e) {
+                log.error(e.getMessage());
+            }
+        }
+
+        return getCatalogJsonFromDatabase();
+    }
+
+    private Map<String, List<Catelog2Vo>> getCatalogJsonFromDatabase() {
         List<CategoryEntity> categoryEntities = list();
         Map<Long, List<CategoryEntity>> parentToChildren = categoryEntities
                 .stream()
@@ -118,7 +144,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                         CategoryEntity::getParentCid,
                         Collectors.toList()
                 ));
-        return categoryEntities.stream().filter(entity -> entity.getCatLevel() == 1)
+        Map<String, List<Catelog2Vo>> result = categoryEntities.stream().filter(entity -> entity.getCatLevel() == 1)
                 .collect(Collectors.toMap(
                         entity -> entity.getCatId().toString(),
                         entity -> parentToChildren
@@ -134,6 +160,15 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                                 ))
                                 .toList()
                 ));
+        String cacheValue = "";
+        try {
+            cacheValue = objectMapper.writeValueAsString(result);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage(), e);
+            return result;
+        }
+        stringRedisTemplate.opsForValue().set(RedisConstants.CATALOG_JSON_CACHE_KEY, cacheValue, 1, TimeUnit.DAYS);
+        return result;
     }
 
     /**

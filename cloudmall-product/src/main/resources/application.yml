@@ -19,6 +19,10 @@ spring:
         password: nacos
         namespace: f64498e5-740a-4dac-972d-22597d7dc2c1
         enabled: false
+  data:
+    redis:
+      host: ${DB_HOST:localhost}
+      password: ${DB_PASSWORD:123456}
 #  config:
 #    import:
 #      - nacos:cloudmall-product.yml?refreshEnabled=true
