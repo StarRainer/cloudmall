@@ -23,8 +23,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
@@ -120,23 +120,33 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Override
     public Map<String, List<Catelog2Vo>> getCatalogJson() {
-        String catalogJson = stringRedisTemplate.opsForValue().get(RedisConstants.CATALOG_JSON_CACHE_KEY);
-
+        String catalogJson = stringRedisTemplate.opsForValue().get(RedisConstants.CATALOG_JSON__KEY_PREFIX);
         if (StringUtils.hasLength(catalogJson)) {
-            Map<String, List<Catelog2Vo>> result = null;
             try {
-                result = objectMapper.readValue(catalogJson, new TypeReference<Map<String, List<Catelog2Vo>>>(){});
-                return result;
+                return objectMapper.readValue(catalogJson, new TypeReference<Map<String, List<Catelog2Vo>>>(){});
             } catch (JsonProcessingException e) {
                 log.error(e.getMessage());
             }
         }
 
-        return getCatalogJsonFromDatabase();
+        Map<String, List<Catelog2Vo>> result = getCatalogJsonFromDatabase();
+        try {
+            String cacheValue = objectMapper.writeValueAsString(result);
+            long expireTime = RedisConstants.CATALOG_JSON_KEY_EXPIRE + ThreadLocalRandom.current().nextInt(2 * 60);
+            stringRedisTemplate.opsForValue().set(RedisConstants.CATALOG_JSON__KEY_PREFIX, cacheValue, expireTime, TimeUnit.SECONDS);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage(), e);
+        }
+
+        return result;
     }
 
     private Map<String, List<Catelog2Vo>> getCatalogJsonFromDatabase() {
         List<CategoryEntity> categoryEntities = list();
+        if (CollectionUtils.isEmpty(categoryEntities)) {
+            return Collections.emptyMap();
+        }
+
         Map<Long, List<CategoryEntity>> parentToChildren = categoryEntities
                 .stream()
                 .sorted(Comparator.comparing(CategoryEntity::getSort, Comparator.nullsLast(Comparator.naturalOrder())))
@@ -144,7 +154,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                         CategoryEntity::getParentCid,
                         Collectors.toList()
                 ));
-        Map<String, List<Catelog2Vo>> result = categoryEntities.stream().filter(entity -> entity.getCatLevel() == 1)
+        return categoryEntities.stream().filter(entity -> entity.getCatLevel() == 1)
                 .collect(Collectors.toMap(
                         entity -> entity.getCatId().toString(),
                         entity -> parentToChildren
@@ -160,15 +170,6 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                                 ))
                                 .toList()
                 ));
-        String cacheValue = "";
-        try {
-            cacheValue = objectMapper.writeValueAsString(result);
-        } catch (JsonProcessingException e) {
-            log.error(e.getMessage(), e);
-            return result;
-        }
-        stringRedisTemplate.opsForValue().set(RedisConstants.CATALOG_JSON_CACHE_KEY, cacheValue, 1, TimeUnit.DAYS);
-        return result;
     }
 
     /**
