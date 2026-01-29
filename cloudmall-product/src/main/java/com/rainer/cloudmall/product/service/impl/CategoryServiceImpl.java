@@ -16,6 +16,8 @@ import com.rainer.cloudmall.product.service.CategoryBrandRelationService;
 import com.rainer.cloudmall.product.service.CategoryService;
 import com.rainer.cloudmall.product.utils.ProductMapper;
 import com.rainer.cloudmall.product.vo.Catelog2Vo;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +29,9 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static com.rainer.cloudmall.product.constant.RedisConstants.CATALOG_JSON_KEY_PREFIX;
+import static com.rainer.cloudmall.product.constant.RedisConstants.CATALOG_JSON_LOCK_PREFIX;
+
 
 @Service("categoryService")
 @Transactional(rollbackFor = Exception.class, readOnly = true)
@@ -36,12 +41,14 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     private final ProductMapper productMapper;
     private final StringRedisTemplate stringRedisTemplate;
     private final ObjectMapper objectMapper;
+    private final RedissonClient redissonClient;
 
-    public CategoryServiceImpl(CategoryBrandRelationService categoryBrandRelationService, ProductMapper productMapper, StringRedisTemplate stringRedisTemplate, ObjectMapper objectMapper) {
+    public CategoryServiceImpl(CategoryBrandRelationService categoryBrandRelationService, ProductMapper productMapper, StringRedisTemplate stringRedisTemplate, ObjectMapper objectMapper, RedissonClient redissonClient) {
         this.categoryBrandRelationService = categoryBrandRelationService;
         this.productMapper = productMapper;
         this.stringRedisTemplate = stringRedisTemplate;
         this.objectMapper = objectMapper;
+        this.redissonClient = redissonClient;
     }
 
     @Override
@@ -118,9 +125,15 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         );
     }
 
+    // SETNX + EXPIRE + UUID + DEL （锁过期有轻微并发问题，不可重入）
+    // 1.设置锁的过期时间，并且加锁和设置过期时间应该是一个原子操作，从而保证锁无论什么情况下都能正常释放
+    // 2.当业务时间过长，锁超时会释放，这个时候有线程获取到这个锁，当前线程和这个线程会同时执行，
+    // 然后当前线程把锁删掉，新的线程又会和其他又获取到锁的线程并发执行，这样锁就失效了。
+    // 引入 UUID 可以防止当前锁删掉其他人的锁，尽管前两个线程还是会并发执行，但是能阻止后面的线程并发执行。
+    // 3.删锁要先查UUID再删，这个操作也得是原子操作，用 Lua 脚本执行。
     @Override
     public Map<String, List<Catelog2Vo>> getCatalogJson() {
-        String catalogJson = stringRedisTemplate.opsForValue().get(RedisConstants.CATALOG_JSON__KEY_PREFIX);
+        String catalogJson = stringRedisTemplate.opsForValue().get(CATALOG_JSON_KEY_PREFIX);
         if (StringUtils.hasLength(catalogJson)) {
             try {
                 return objectMapper.readValue(catalogJson, new TypeReference<Map<String, List<Catelog2Vo>>>(){});
@@ -129,19 +142,34 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             }
         }
 
-        Map<String, List<Catelog2Vo>> result = getCatalogJsonFromDatabase();
+        RLock lock = redissonClient.getLock(CATALOG_JSON_LOCK_PREFIX);
+        lock.lock();
         try {
-            String cacheValue = objectMapper.writeValueAsString(result);
-            long expireTime = RedisConstants.CATALOG_JSON_KEY_EXPIRE + ThreadLocalRandom.current().nextInt(2 * 60);
-            stringRedisTemplate.opsForValue().set(RedisConstants.CATALOG_JSON__KEY_PREFIX, cacheValue, expireTime, TimeUnit.SECONDS);
-        } catch (JsonProcessingException e) {
-            log.error(e.getMessage(), e);
-        }
+            catalogJson = stringRedisTemplate.opsForValue().get(CATALOG_JSON_KEY_PREFIX);
+            if (StringUtils.hasLength(catalogJson)) {
+                try {
+                    return objectMapper.readValue(catalogJson, new TypeReference<Map<String, List<Catelog2Vo>>>(){});
+                } catch (JsonProcessingException e) {
+                    log.error(e.getMessage());
+                }
+            }
 
-        return result;
+            Map<String, List<Catelog2Vo>> result = getCatalogJsonFromDatabase();
+            try {
+                String cacheValue = objectMapper.writeValueAsString(result);
+                long expireTime = RedisConstants.CATALOG_JSON_KEY_EXPIRE + ThreadLocalRandom.current().nextInt(2 * 60);
+                stringRedisTemplate.opsForValue().set(CATALOG_JSON_KEY_PREFIX, cacheValue, expireTime, TimeUnit.SECONDS);
+            } catch (JsonProcessingException e) {
+                log.error(e.getMessage(), e);
+            }
+            return result;
+        } finally {
+            lock.unlock();
+        }
     }
 
     private Map<String, List<Catelog2Vo>> getCatalogJsonFromDatabase() {
+        log.debug("从数据库查询所有三级分类");
         List<CategoryEntity> categoryEntities = list();
         if (CollectionUtils.isEmpty(categoryEntities)) {
             return Collections.emptyMap();
