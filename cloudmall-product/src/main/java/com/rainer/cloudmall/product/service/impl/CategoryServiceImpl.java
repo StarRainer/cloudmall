@@ -116,7 +116,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             return Collections.emptyList();
         }
         return list(new LambdaQueryWrapper<CategoryEntity>()
-                .select(CategoryEntity::getName)
+                .select(CategoryEntity::getCatId, CategoryEntity::getName)
                 .in(CategoryEntity::getCatId, catalogIds)
         );
     }
