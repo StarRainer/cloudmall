@@ -46,11 +46,14 @@ spring:
             - Path=/api/**
           filters:
             - RewritePath=/api/(?<segment>.*), /renren-fast/$\{segment}
-        - id: cloudmall_host_route
+        - id: cloudmall_search_route
+          uri: lb://cloudmall-search
+          predicates:
+            - Host=search.cloudmall.com
+        - id: cloudmall_index_route
           uri: lb://cloudmall-product
           predicates:
-            - Host=**.cloudmall.com
-
+            - Host=cloudmall.com
   config:
     import:
       - nacos:cloudmall-gateway.yml?refreshEnabled=true
