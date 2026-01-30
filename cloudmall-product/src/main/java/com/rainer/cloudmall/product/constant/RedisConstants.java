@@ -5,9 +5,9 @@ public final class RedisConstants {
 
     }
 
-    public static final String CATALOG_JSON_KEY_PREFIX = "cloudmall:product:catalogjson";
+    public static final String CATALOG_JSON_KEY_PREFIX = "cloudmall:category:catalogjson";
 
     public static final long CATALOG_JSON_KEY_EXPIRE = 5 * 60L;
 
-    public static final String CATALOG_JSON_LOCK_PREFIX = "cloudmall:product:catalogjson:lock";
+    public static final String CATALOG_JSON_LOCK_PREFIX = "cloudmall:category:catalogjson:lock";
 }

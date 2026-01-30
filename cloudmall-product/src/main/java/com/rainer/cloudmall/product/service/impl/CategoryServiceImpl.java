@@ -18,6 +18,7 @@ import com.rainer.cloudmall.product.utils.ProductMapper;
 import com.rainer.cloudmall.product.vo.Catelog2Vo;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -101,6 +102,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(cacheNames = "category", allEntries = true)
     public void updateCascade(CategoryEntity category) {
         updateById(category);
         if (StringUtils.hasLength(category.getName())) {

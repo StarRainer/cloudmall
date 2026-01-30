@@ -31,7 +31,7 @@ public class CacheConfig {
             configuration = configuration.entryTtl(cachePropertiesRedis.getTimeToLive());
         }
         if (cachePropertiesRedis.getKeyPrefix() != null) {
-            configuration = configuration.computePrefixWith(name -> cachePropertiesRedis.getKeyPrefix() + ":" + name);
+            configuration = configuration.computePrefixWith(name -> cachePropertiesRedis.getKeyPrefix() + ":" + name + ":");
         }
         return configuration;
     }
