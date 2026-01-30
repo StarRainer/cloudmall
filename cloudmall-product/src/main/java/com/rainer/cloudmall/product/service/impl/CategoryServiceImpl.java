@@ -4,18 +4,35 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rainer.cloudmall.common.utils.PageUtils;
 import com.rainer.cloudmall.common.utils.Query;
+import com.rainer.cloudmall.product.constant.RedisConstants;
 import com.rainer.cloudmall.product.dao.CategoryDao;
 import com.rainer.cloudmall.product.entity.CategoryEntity;
 import com.rainer.cloudmall.product.service.CategoryBrandRelationService;
 import com.rainer.cloudmall.product.service.CategoryService;
+import com.rainer.cloudmall.product.utils.ProductMapper;
+import com.rainer.cloudmall.product.vo.Catelog2Vo;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import static com.rainer.cloudmall.product.constant.RedisConstants.CATALOG_JSON_KEY_PREFIX;
+import static com.rainer.cloudmall.product.constant.RedisConstants.CATALOG_JSON_LOCK_PREFIX;
 
 
 @Service("categoryService")
@@ -23,9 +40,17 @@ import java.util.*;
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
 
     private final CategoryBrandRelationService categoryBrandRelationService;
+    private final ProductMapper productMapper;
+    private final StringRedisTemplate stringRedisTemplate;
+    private final ObjectMapper objectMapper;
+    private final RedissonClient redissonClient;
 
-    public CategoryServiceImpl(CategoryBrandRelationService categoryBrandRelationService) {
+    public CategoryServiceImpl(CategoryBrandRelationService categoryBrandRelationService, ProductMapper productMapper, StringRedisTemplate stringRedisTemplate, ObjectMapper objectMapper, RedissonClient redissonClient) {
         this.categoryBrandRelationService = categoryBrandRelationService;
+        this.productMapper = productMapper;
+        this.stringRedisTemplate = stringRedisTemplate;
+        this.objectMapper = objectMapper;
+        this.redissonClient = redissonClient;
     }
 
     @Override
@@ -77,6 +102,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(cacheNames = "category", allEntries = true)
     public void updateCascade(CategoryEntity category) {
         updateById(category);
         if (StringUtils.hasLength(category.getName())) {
@@ -93,6 +119,88 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                 .select(CategoryEntity::getName)
                 .in(CategoryEntity::getCatId, catalogIds)
         );
+    }
+
+    @Override
+    @Cacheable(cacheNames = "category", key = "'level1'")
+    public List<CategoryEntity> getFirstLevel() {
+        return list(new LambdaQueryWrapper<CategoryEntity>()
+                .eq(CategoryEntity::getCatLevel, 1)
+        );
+    }
+
+    // SETNX + EXPIRE + UUID + DEL （锁过期有轻微并发问题，不可重入）
+    // 1.设置锁的过期时间，并且加锁和设置过期时间应该是一个原子操作，从而保证锁无论什么情况下都能正常释放
+    // 2.当业务时间过长，锁超时会释放，这个时候有线程获取到这个锁，当前线程和这个线程会同时执行，
+    // 然后当前线程把锁删掉，新的线程又会和其他又获取到锁的线程并发执行，这样锁就失效了。
+    // 引入 UUID 可以防止当前锁删掉其他人的锁，尽管前两个线程还是会并发执行，但是能阻止后面的线程并发执行。
+    // 3.删锁要先查UUID再删，这个操作也得是原子操作，用 Lua 脚本执行。
+    @Override
+    public Map<String, List<Catelog2Vo>> getCatalogJson() {
+        String catalogJson = stringRedisTemplate.opsForValue().get(CATALOG_JSON_KEY_PREFIX);
+        if (StringUtils.hasLength(catalogJson)) {
+            try {
+                return objectMapper.readValue(catalogJson, new TypeReference<Map<String, List<Catelog2Vo>>>(){});
+            } catch (JsonProcessingException e) {
+                log.error(e.getMessage());
+            }
+        }
+
+        RLock lock = redissonClient.getLock(CATALOG_JSON_LOCK_PREFIX);
+        lock.lock();
+        try {
+            catalogJson = stringRedisTemplate.opsForValue().get(CATALOG_JSON_KEY_PREFIX);
+            if (StringUtils.hasLength(catalogJson)) {
+                try {
+                    return objectMapper.readValue(catalogJson, new TypeReference<Map<String, List<Catelog2Vo>>>(){});
+                } catch (JsonProcessingException e) {
+                    log.error(e.getMessage());
+                }
+            }
+
+            Map<String, List<Catelog2Vo>> result = getCatalogJsonFromDatabase();
+            try {
+                String cacheValue = objectMapper.writeValueAsString(result);
+                long expireTime = RedisConstants.CATALOG_JSON_KEY_EXPIRE + ThreadLocalRandom.current().nextInt(2 * 60);
+                stringRedisTemplate.opsForValue().set(CATALOG_JSON_KEY_PREFIX, cacheValue, expireTime, TimeUnit.SECONDS);
+            } catch (JsonProcessingException e) {
+                log.error(e.getMessage(), e);
+            }
+            return result;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    private Map<String, List<Catelog2Vo>> getCatalogJsonFromDatabase() {
+        List<CategoryEntity> categoryEntities = list();
+        if (CollectionUtils.isEmpty(categoryEntities)) {
+            return Collections.emptyMap();
+        }
+
+        Map<Long, List<CategoryEntity>> parentToChildren = categoryEntities
+                .stream()
+                .sorted(Comparator.comparing(CategoryEntity::getSort, Comparator.nullsLast(Comparator.naturalOrder())))
+                .collect(Collectors.groupingBy(
+                        CategoryEntity::getParentCid,
+                        Collectors.toList()
+                ));
+        return categoryEntities.stream().filter(entity -> entity.getCatLevel() == 1)
+                .collect(Collectors.toMap(
+                        entity -> entity.getCatId().toString(),
+                        entity -> parentToChildren
+                                .getOrDefault(entity.getCatId(), Collections.emptyList())
+                                .stream()
+                                .map(catelog2Entity -> productMapper.toCateLog2Vo(
+                                        catelog2Entity,
+                                        parentToChildren
+                                                .getOrDefault(catelog2Entity.getCatId(), Collections.emptyList())
+                                                .stream()
+                                                .map(productMapper::toCatelog3Vo)
+                                                .toList()
+                                ))
+                                .toList()
+                ));
     }
 
     /**

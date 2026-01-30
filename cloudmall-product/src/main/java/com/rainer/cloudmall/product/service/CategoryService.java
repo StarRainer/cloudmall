@@ -3,6 +3,7 @@ package com.rainer.cloudmall.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.rainer.cloudmall.product.entity.CategoryEntity;
 import com.rainer.cloudmall.common.utils.PageUtils;
+import com.rainer.cloudmall.product.vo.Catelog2Vo;
 
 import java.util.List;
 import java.util.Map;
@@ -27,5 +28,9 @@ public interface CategoryService extends IService<CategoryEntity> {
     void updateCascade(CategoryEntity category);
 
     List<CategoryEntity> listNameByIds(List<Long> catalogIds);
+
+    List<CategoryEntity> getFirstLevel();
+
+    Map<String, List<Catelog2Vo>> getCatalogJson();
 }
 

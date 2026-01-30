@@ -149,4 +149,13 @@ public interface ProductMapper {
                 .map(entity -> attrVoToSkuSaleAttrValueEntity(entity, skuId))
                 .toList();
     }
+
+    @Mapping(target = "id", source = "categoryEntity.catId")
+    @Mapping(target = "catalog3List", source = "catalog3Vos")
+    @Mapping(target = "catalog1Id", source = "categoryEntity.parentCid")
+    Catelog2Vo toCateLog2Vo(CategoryEntity categoryEntity, List<Catelog2Vo.Catelog3Vo> catalog3Vos);
+
+    @Mapping(target = "catalog2Id", source = "categoryEntity.parentCid")
+    @Mapping(target = "id", source = "categoryEntity.catId")
+    Catelog2Vo.Catelog3Vo toCatelog3Vo(CategoryEntity categoryEntity);
 }

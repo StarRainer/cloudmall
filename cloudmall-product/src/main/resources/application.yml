@@ -4,7 +4,7 @@ spring:
   datasource: # 配置 MySQL 数据源
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:123456}
-    url: jdbc:mysql://${DB_HOST:localhost}:3306/cloudmail_pms?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/cloudmail_pms?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     driver-class-name: com.mysql.cj.jdbc.Driver
   cloud:
     nacos:
@@ -19,8 +19,17 @@ spring:
         password: nacos
         namespace: f64498e5-740a-4dac-972d-22597d7dc2c1
         enabled: false
-  thymeleaf:
-    cache: false
+  data:
+    redis:
+      host: ${DB_HOST:localhost}
+      password: ${DB_PASSWORD:123456}
+  cache:
+    type: redis
+    redis:
+      cache-null-values: true
+      use-key-prefix: true
+      time-to-live: 300000
+      key-prefix: cloudmall
 #  config:
 #    import:
 #      - nacos:cloudmall-product.yml?refreshEnabled=true
