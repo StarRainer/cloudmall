@@ -18,6 +18,7 @@ import com.rainer.cloudmall.product.utils.ProductMapper;
 import com.rainer.cloudmall.product.vo.Catelog2Vo;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -119,6 +120,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     }
 
     @Override
+    @Cacheable(cacheNames = "category", key = "'level1'")
     public List<CategoryEntity> getFirstLevel() {
         return list(new LambdaQueryWrapper<CategoryEntity>()
                 .eq(CategoryEntity::getCatLevel, 1)
@@ -169,7 +171,6 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     }
 
     private Map<String, List<Catelog2Vo>> getCatalogJsonFromDatabase() {
-        log.debug("从数据库查询所有三级分类");
         List<CategoryEntity> categoryEntities = list();
         if (CollectionUtils.isEmpty(categoryEntities)) {
             return Collections.emptyMap();

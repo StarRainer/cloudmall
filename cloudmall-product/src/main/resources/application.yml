@@ -23,6 +23,13 @@ spring:
     redis:
       host: ${DB_HOST:localhost}
       password: ${DB_PASSWORD:123456}
+  cache:
+    type: redis
+    redis:
+      cache-null-values: true
+      use-key-prefix: true
+      time-to-live: 300000
+      key-prefix: cloudmall
 #  config:
 #    import:
 #      - nacos:cloudmall-product.yml?refreshEnabled=true
