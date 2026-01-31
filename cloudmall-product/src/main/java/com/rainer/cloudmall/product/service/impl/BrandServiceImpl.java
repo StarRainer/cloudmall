@@ -60,7 +60,7 @@ public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> impleme
             return Collections.emptyList();
         }
         return list(new LambdaQueryWrapper<BrandEntity>()
-                .select(BrandEntity::getName, BrandEntity::getLogo)
+                .select(BrandEntity::getBrandId, BrandEntity::getName, BrandEntity::getLogo)
                 .in(BrandEntity::getBrandId, brandIds)
         );
     }
