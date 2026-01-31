@@ -23,10 +23,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 @Service
@@ -85,9 +82,15 @@ public class SearchService {
         if (searchResponse.hits().total() != null) {
             searchResult.setTotal(searchResponse.hits().total().value());
             searchResult.setTotalPages((int) ((searchResult.getTotal() + ElasticSearchConstants.PRODUCT_SEARCH_PAGE_SIZE - 1) / ElasticSearchConstants.PRODUCT_SEARCH_PAGE_SIZE));
+            List<Integer> pageNavs = new ArrayList<>();
+            for (int i = 1; i <= searchResult.getTotalPages(); i++) {
+                pageNavs.add(i);
+            }
+            searchResult.setPageNavs(pageNavs);
         } else {
             searchResult.setTotal(0L);
             searchResult.setTotalPages(0);
+            searchResult.setPageNavs(Collections.emptyList());
         }
 
         return searchResult;

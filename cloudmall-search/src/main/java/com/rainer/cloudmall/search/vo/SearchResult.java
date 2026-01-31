@@ -12,6 +12,7 @@ public class SearchResult {
     private List<AttrVo> attrs;
     private List<CatalogVo> catalogs;
     private Integer pageNum;
+    private List<Integer> pageNavs;
     private Long total;
     private Integer totalPages;
 
