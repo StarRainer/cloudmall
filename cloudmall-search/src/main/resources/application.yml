@@ -18,3 +18,7 @@ spring:
         enabled: false
 server:
   port: 17000
+logging:
+  level:
+    root: info
+    com.rainer.cloudmall: debug

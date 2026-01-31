@@ -6,4 +6,10 @@ public final class ElasticSearchConstants {
     }
 
     public static final String PRODUCT_INDEX = "product";
+
+    public static final Integer PRODUCT_SEARCH_PAGE_SIZE = 2;
+
+    public static final String HIGH_LIGHT_PRE_TAG = "<b style='color:red'>";
+
+    public static final String HIGH_LIGHT_POST_TAG = "</b>";
 }
