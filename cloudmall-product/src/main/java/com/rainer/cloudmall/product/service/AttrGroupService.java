@@ -28,5 +28,7 @@ public interface AttrGroupService extends IService<AttrGroupEntity> {
     PageUtils getAttrWithNoRelation(Map<String, Object> params, Long attrGroupId);
 
     List<AttrGroupWithAttrsVo> getAttrGroupsWithAttrs(Long catelogId);
+
+    List<AttrGroupEntity> getAttrGroupByCatalogId(Long catalogId);
 }
 

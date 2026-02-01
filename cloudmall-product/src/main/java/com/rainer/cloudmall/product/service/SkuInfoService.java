@@ -3,6 +3,7 @@ package com.rainer.cloudmall.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.rainer.cloudmall.common.utils.PageUtils;
 import com.rainer.cloudmall.product.entity.SkuInfoEntity;
+import com.rainer.cloudmall.product.vo.SkuItemVo;
 
 import java.util.List;
 import java.util.Map;
@@ -21,5 +22,7 @@ public interface SkuInfoService extends IService<SkuInfoEntity> {
     Map<Long, String> getSkuNamesBySkuIds(List<Long> skuIds);
 
     List<SkuInfoEntity> getSkuInfosBySpuId(Long spuId);
+
+    List<Long> getSkuIdsByspuId(Long spuId);
 }
 

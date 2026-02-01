@@ -1,6 +1,9 @@
 package com.rainer.cloudmall.product.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -24,6 +27,13 @@ public class SkuSaleAttrValueServiceImpl extends ServiceImpl<SkuSaleAttrValueDao
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public List<SkuSaleAttrValueEntity> getAttrValuesBySkuIds(List<Long> skuIds) {
+        return list(new LambdaQueryWrapper<SkuSaleAttrValueEntity>()
+                .in(SkuSaleAttrValueEntity::getSkuId, skuIds)
+        );
     }
 
 }
