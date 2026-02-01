@@ -50,19 +50,30 @@ public class SkuManagerImpl implements SkuManager {
         // 获取spu销售属性组合
         List<Long> skuIds = skuInfoService.getSkuIdsByspuId(skuInfoEntity.getSpuId());
         List<SkuSaleAttrValueEntity> skuSaleAttrValueEntities = skuSaleAttrValueService.getAttrValuesBySkuIds(skuIds);
-        List<SkuItemVo.SkuItemSaleAttrVo> skuItemSaleAttrVos = skuSaleAttrValueEntities.stream()
+        List<SkuItemVo.SkuItemSaleAttrVo> skuItemSaleAttrVos = skuSaleAttrValueEntities
+                .stream()
                 .collect(Collectors.groupingBy(SkuSaleAttrValueEntity::getAttrId))
                 .entrySet().stream()
                 .map(entry -> {
                     SkuItemVo.SkuItemSaleAttrVo skuItemSaleAttrVo = new SkuItemVo.SkuItemSaleAttrVo();
                     skuItemSaleAttrVo.setAttrId(entry.getKey());
-                    skuItemSaleAttrVo.setAttrName(entry.getValue().getFirst().getAttrName());
-                    skuItemSaleAttrVo.setAttrValues(entry.getValue()
-                            .stream()
-                            .map(SkuSaleAttrValueEntity::getAttrValue)
-                            .distinct()
-                            .toList()
-                    );
+                    List<SkuSaleAttrValueEntity> groupEntities = entry.getValue();
+                    skuItemSaleAttrVo.setAttrName(groupEntities.getFirst().getAttrName());
+                    List<SkuItemVo.SkuItemSaleAttrVo.AttrValueWithSkuIdVo> attrValueVos = groupEntities.stream()
+                            .collect(Collectors.groupingBy(SkuSaleAttrValueEntity::getAttrValue))
+                            .entrySet().stream()
+                            .map(valEntry -> {
+                                SkuItemVo.SkuItemSaleAttrVo.AttrValueWithSkuIdVo valVo =
+                                        new SkuItemVo.SkuItemSaleAttrVo.AttrValueWithSkuIdVo();
+                                valVo.setAttrValue(valEntry.getKey());
+                                String skuIdsStr = valEntry.getValue().stream()
+                                        .map(entity -> entity.getSkuId().toString())
+                                        .collect(Collectors.joining(","));
+                                valVo.setSkuIds(skuIdsStr);
+                                return valVo;
+                            })
+                            .collect(Collectors.toList());
+                    skuItemSaleAttrVo.setAttrValues(attrValueVos);
                     return skuItemSaleAttrVo;
                 })
                 .toList();

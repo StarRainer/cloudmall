@@ -14,12 +14,19 @@ public class SkuItemVo {
     private List<SkuItemSaleAttrVo> saleAttrVos;
     private SpuInfoDescEntity spuInfoDescEntity;
     private List<SpuItemAttrGroupVo> spuItemAttrGroupVos;
+    private boolean hasStock = true;
 
     @Data
     public static class SkuItemSaleAttrVo {
         private Long attrId;
         private String attrName;
-        private List<String> attrValues;
+        private List<AttrValueWithSkuIdVo> attrValues;
+
+        @Data
+        public static class AttrValueWithSkuIdVo {
+            private String attrValue;
+            private String skuIds;
+        }
     }
 
     @Data
