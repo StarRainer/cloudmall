@@ -5,10 +5,16 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rainer.cloudmall.common.utils.PageUtils;
 import com.rainer.cloudmall.common.utils.Query;
 import com.rainer.cloudmall.product.dao.SkuInfoDao;
+import com.rainer.cloudmall.product.entity.SkuImagesEntity;
 import com.rainer.cloudmall.product.entity.SkuInfoEntity;
+import com.rainer.cloudmall.product.entity.SpuInfoDescEntity;
 import com.rainer.cloudmall.product.entity.SpuInfoEntity;
+import com.rainer.cloudmall.product.service.SkuImagesService;
 import com.rainer.cloudmall.product.service.SkuInfoService;
+import com.rainer.cloudmall.product.service.SpuInfoDescService;
+import com.rainer.cloudmall.product.vo.SkuItemVo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -21,6 +27,14 @@ import java.util.stream.Collectors;
 
 @Service("skuInfoService")
 public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> implements SkuInfoService {
+
+    private final SkuImagesService skuImagesService;
+    private final SpuInfoDescService spuInfoDescService;
+
+    public SkuInfoServiceImpl(SkuImagesService skuImagesService, SpuInfoDescService spuInfoDescService) {
+        this.skuImagesService = skuImagesService;
+        this.spuInfoDescService = spuInfoDescService;
+    }
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -80,5 +94,13 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
         return list(new LambdaQueryWrapper<SkuInfoEntity>()
                 .eq(SkuInfoEntity::getSpuId, spuId)
         );
+    }
+
+    @Override
+    public List<Long> getSkuIdsByspuId(Long spuId) {
+        return list(new LambdaQueryWrapper<SkuInfoEntity>()
+                .select(SkuInfoEntity::getSkuId)
+                .eq(SkuInfoEntity::getSpuId, spuId)
+        ).stream().map(SkuInfoEntity::getSkuId).toList();
     }
 }

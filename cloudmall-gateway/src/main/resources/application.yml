@@ -50,10 +50,10 @@ spring:
           uri: lb://cloudmall-search
           predicates:
             - Host=search.cloudmall.com
-        - id: cloudmall_index_route
+        - id: cloudmall_product_route
           uri: lb://cloudmall-product
           predicates:
-            - Host=cloudmall.com
+            - Host=cloudmall.com, item.cloudmall.com
   config:
     import:
       - nacos:cloudmall-gateway.yml?refreshEnabled=true

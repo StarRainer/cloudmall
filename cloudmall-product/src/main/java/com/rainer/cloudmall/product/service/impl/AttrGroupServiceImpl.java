@@ -136,4 +136,11 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
 
         return attrGroupWithAttrsVos;
     }
+
+    @Override
+    public List<AttrGroupEntity> getAttrGroupByCatalogId(Long catalogId) {
+        return list(new LambdaQueryWrapper<AttrGroupEntity>()
+                .eq(AttrGroupEntity::getCatelogId, catalogId)
+        );
+    }
 }

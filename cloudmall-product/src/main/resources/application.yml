@@ -46,3 +46,8 @@ logging:
   level:
     root: info
     com.rainer.cloudmall: debug
+cloudmall:
+  thread-pool:
+    core-pool-size: 20
+    maximum-pool-size: 100
+    keep-alive-time: 10

@@ -23,6 +23,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service("attrAttrgroupRelationService")
