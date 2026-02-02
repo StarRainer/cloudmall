@@ -31,31 +31,16 @@ public class SmsService {
         formData.add("template_id", aliSmsProperties.getTemplateId());
         formData.add("phone_number", phone);
 
-        try {
-            log.debug("向第三方短信服务发送请求：{}", formData);
-            SmsResponseVo result = restClient.post()
-                    .uri("/data/send_sms")
-                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                    .body(formData)
-                    .retrieve()
-                    .body(SmsResponseVo.class);
+        log.debug("向第三方短信服务发送请求：{}", formData);
+        SmsResponseVo result = restClient.post()
+                .uri("/data/send_sms")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(formData)
+                .retrieve()
+                .body(SmsResponseVo.class);
 
-            if (result != null) {
-                log.info("短信发送成功：request-id={}, phone={}", result.getRequestId(), phone);
-            }
-
-        } catch (HttpClientErrorException e) {
-            String xCaError = null;
-            if (e.getResponseHeaders() != null) {
-                xCaError = e.getResponseHeaders().getFirst("X-Ca-Error-Message");
-            }
-            String errorBody = e.getResponseBodyAsString();
-
-            log.error("调用失败: Status={}, X-Ca-Error-Message={}, Body={}",
-                    e.getStatusCode(),
-                    xCaError,
-                    errorBody
-            );
+        if (result != null) {
+            log.info("短信发送成功：request-id={}, phone={}", result.getRequestId(), phone);
         }
     }
 }
