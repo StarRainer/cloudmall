@@ -1,5 +1,7 @@
 package com.rainer.cloudmall.member.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.rainer.cloudmall.member.vo.MemberRegisterVo;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -11,6 +13,7 @@ import com.rainer.cloudmall.common.utils.Query;
 import com.rainer.cloudmall.member.dao.MemberDao;
 import com.rainer.cloudmall.member.entity.MemberEntity;
 import com.rainer.cloudmall.member.service.MemberService;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service("memberService")
@@ -24,6 +27,16 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public long countByMobile(String phone) {
+        return count(new LambdaQueryWrapper<MemberEntity>().eq(MemberEntity::getMobile, phone));
+    }
+
+    @Override
+    public long countByUsername(String userName) {
+        return count(new LambdaQueryWrapper<MemberEntity>().eq(MemberEntity::getUsername, userName));
     }
 
 }

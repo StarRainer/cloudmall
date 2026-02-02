@@ -22,3 +22,5 @@ logging:
   level:
     root: info
     com.rainer.cloudmall: debug
+server:
+  port: 19000

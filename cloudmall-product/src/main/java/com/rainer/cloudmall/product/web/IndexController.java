@@ -2,7 +2,6 @@ package com.rainer.cloudmall.product.web;
 
 import com.rainer.cloudmall.product.entity.CategoryEntity;
 import com.rainer.cloudmall.product.service.CategoryService;
-import com.rainer.cloudmall.product.service.impl.CategoryServiceImpl;
 import com.rainer.cloudmall.product.vo.Catelog2Vo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

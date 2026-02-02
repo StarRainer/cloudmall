@@ -1,4 +1,4 @@
-package com.rainer.cloudmall.authentication.exception;
+package com.rainer.cloudmall.member.exception;
 
 import com.rainer.cloudmall.common.exception.BaseException;
 import com.rainer.cloudmall.common.exception.code.CommonCode;
@@ -21,13 +21,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = BaseException.class)
     public Result baseException(BaseException e) {
-        log.error(e.getMessage(), e);
+        log.warn(e.getMessage());
         return Result.error(e.getCode(), e.getMessage());
     }
 
     @ExceptionHandler(value = MissingServletRequestParameterException.class)
     public Result missingServletRequestParameterException(MissingServletRequestParameterException e) {
-        log.error(e.getMessage(), e);
+        log.warn(e.getMessage());
         return Result.error(CommonCode.BAD_REQUEST.getCode(), e.getMessage());
     }
 
