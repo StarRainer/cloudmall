@@ -18,6 +18,8 @@
     </licenses>
 
     <modules>
+        <module>cloudmall-authentication</module>
+        <module>cloudmall-search</module>
         <module>cloudmall-coupon</module>
         <module>cloudmall-member</module>
         <module>cloudmall-order</module>
