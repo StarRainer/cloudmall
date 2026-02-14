@@ -30,6 +30,9 @@ spring:
       use-key-prefix: true
       time-to-live: 300000
       key-prefix: cloudmall
+  session:
+    redis:
+      namespace: cloudmall:session
 #  config:
 #    import:
 #      - nacos:cloudmall-product.yml?refreshEnabled=true
@@ -48,6 +51,6 @@ logging:
     com.rainer.cloudmall: debug
 cloudmall:
   thread-pool:
-    core-pool-size: 20
-    maximum-pool-size: 100
+    core-pool-size: 15
+    maximum-pool-size: 25
     keep-alive-time: 10

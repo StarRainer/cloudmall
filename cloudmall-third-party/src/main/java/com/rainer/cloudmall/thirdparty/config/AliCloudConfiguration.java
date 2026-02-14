@@ -7,17 +7,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EnableConfigurationProperties(AliOssProperties.class)
+@EnableConfigurationProperties({AliOssProperties.class, AliSmsProperties.class})
 public class AliCloudConfiguration {
-
-    private final AliOssProperties aliOssProperties;
-
-    public AliCloudConfiguration(AliOssProperties aliOssProperties) {
-        this.aliOssProperties = aliOssProperties;
-    }
-
     @Bean
-    public Client client() throws Exception {
+    public Client client(AliOssProperties aliOssProperties) throws Exception {
         Config config = new Config()
                 .setAccessKeyId(aliOssProperties.getAccessKeyId())
                 .setAccessKeySecret(aliOssProperties.getAccessKeySecret())

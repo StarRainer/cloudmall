@@ -14,6 +14,7 @@ spring:
         username: nacos
         password: nacos
         namespace: f64498e5-740a-4dac-972d-22597d7dc2c1
+        enabled: false
     gateway:
       routes:
         - id: product_route
@@ -54,8 +55,9 @@ spring:
           uri: lb://cloudmall-product
           predicates:
             - Host=cloudmall.com, item.cloudmall.com
-  config:
-    import:
-      - nacos:cloudmall-gateway.yml?refreshEnabled=true
+        - id: cloudmall_auth_route
+          uri: lb://cloudmall-authentication
+          predicates:
+            - Host=auth.cloudmall.com
 server:
   port: 20000

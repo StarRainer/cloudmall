@@ -19,8 +19,8 @@ spring:
 #      - nacos:cloudmall-product.yml?refreshEnabled=true
 server:
   port: 16000
-alibaba:
-  cloud:
+alicloud:
+  oss:
     access-key-id: ${ALIYUN_ACCESS_KEY}
     access-key-secret: ${ALIYUN_SECRET_KEY}
     endpoint: sts.cn-beijing.aliyuncs.com
@@ -28,3 +28,12 @@ alibaba:
     bucket: cloudmall-project
     expire-time: 120
     region: cn-beijing
+  sms:
+   url: https://dfsns.market.alicloudapi.com
+   app-code: ${ALIYUN_SMS_APP_CODE}
+   expire: 1
+   template-id: TPL_0001
+logging:
+  level:
+    root: info
+    com.rainer.cloudmall: debug

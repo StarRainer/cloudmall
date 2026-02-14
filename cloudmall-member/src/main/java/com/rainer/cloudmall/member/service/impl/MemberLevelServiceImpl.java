@@ -30,4 +30,24 @@ public class MemberLevelServiceImpl extends ServiceImpl<MemberLevelDao, MemberLe
         return new PageUtils(page);
     }
 
+    public Long getDefaultLevelId() {
+        MemberLevelEntity defaultMemberLevelEntity = getOne(new LambdaQueryWrapper<MemberLevelEntity>()
+                .select(MemberLevelEntity::getId)
+                .eq(MemberLevelEntity::getDefaultStatus, 1)
+                .last("limit 1")
+        );
+        if (defaultMemberLevelEntity != null) {
+            return defaultMemberLevelEntity.getId();
+        }
+
+        MemberLevelEntity memberLevelEntity = getOne(new LambdaQueryWrapper<MemberLevelEntity>()
+                .select(MemberLevelEntity::getId)
+                .orderByAsc(MemberLevelEntity::getId)
+                .last("limit 1")
+        );
+        if (memberLevelEntity != null) {
+            return memberLevelEntity.getId();
+        }
+        return null;
+    }
 }
