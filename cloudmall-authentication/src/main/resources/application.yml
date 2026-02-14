@@ -18,9 +18,20 @@ spring:
     redis:
       host: ${DB_HOST:localhost}
       password: ${DB_PASSWORD:123456}
+  session:
+    redis:
+      namespace: cloudmall:session
 logging:
   level:
     root: info
     com.rainer.cloudmall: debug
 server:
   port: 19000
+  servlet:
+    session:
+      timeout: 360m
+cloudmall:
+  github:
+    client-id: ${GITHUB_CLIENT_ID}
+    client-secret: ${GITHUB_CLIENT_SECRET}
+    redirect-uri: ${GITHUB_REDIRECT_URI}

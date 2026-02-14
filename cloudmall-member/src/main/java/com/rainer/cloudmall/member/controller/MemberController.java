@@ -1,18 +1,19 @@
 package com.rainer.cloudmall.member.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
 import com.rainer.cloudmall.common.utils.FeignResult;
-import com.rainer.cloudmall.member.feign.CouponFeignService;
+import com.rainer.cloudmall.common.utils.PageUtils;
 import com.rainer.cloudmall.common.utils.Result;
+import com.rainer.cloudmall.member.entity.MemberEntity;
+import com.rainer.cloudmall.member.feign.CouponFeignService;
 import com.rainer.cloudmall.member.service.MemberManager;
+import com.rainer.cloudmall.member.service.MemberService;
+import com.rainer.cloudmall.member.to.GitHubUserTo;
+import com.rainer.cloudmall.member.vo.MemberLoginVo;
 import com.rainer.cloudmall.member.vo.MemberRegisterVo;
 import org.springframework.web.bind.annotation.*;
 
-import com.rainer.cloudmall.member.entity.MemberEntity;
-import com.rainer.cloudmall.member.service.MemberService;
-import com.rainer.cloudmall.common.utils.PageUtils;
+import java.util.Arrays;
+import java.util.Map;
 
 
 /**
@@ -39,6 +40,18 @@ public class MemberController {
     public FeignResult<Void> register(@RequestBody MemberRegisterVo memberRegisterVo) {
         memberManager.register(memberRegisterVo);
         return FeignResult.success();
+    }
+
+    @PostMapping("/login")
+    public FeignResult<MemberEntity> login(@RequestBody MemberLoginVo memberLoginVo) {
+        MemberEntity memberEntity = memberService.login(memberLoginVo);
+        return FeignResult.success(memberEntity);
+    }
+
+    @PostMapping("/github/login")
+    public FeignResult<MemberEntity> login(@RequestBody GitHubUserTo gitHubUserTo) {
+        MemberEntity memberEntity = memberManager.loginOrRegister(gitHubUserTo);
+        return FeignResult.success(memberEntity);
     }
 
     @RequestMapping("/coupons/{memberId}")

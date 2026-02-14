@@ -6,8 +6,8 @@ import lombok.Data;
 
 @Data
 public class UserRegisterVo {
-    @NotBlank(message = "用户名必须提交")
-    @Pattern(regexp = "^[a-zA-Z0-9_-]{6,18}$", message = "用户名必须是4-18位字符，只能包含字母、数字、_和-")
+    @NotBlank(message = "用户名必须填写")
+    @Pattern(regexp = "^(?!\\d+$)[a-zA-Z0-9_-]{6,18}$", message = "用户名必须是6-18位字符，且不能为纯数字")
     private String userName;
     @NotBlank(message = "密码必须填写")
     @Pattern(regexp = "^(?!\\d+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,18}$", message = "密码必须是6-20位的数字和字母组合")

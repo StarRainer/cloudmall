@@ -5,12 +5,14 @@ import com.rainer.cloudmall.authentication.exception.SendCodeFailureException;
 import com.rainer.cloudmall.authentication.exception.SendCodeTooFastException;
 import com.rainer.cloudmall.authentication.feign.MemberFeignService;
 import com.rainer.cloudmall.authentication.feign.SmsFeignService;
+import com.rainer.cloudmall.authentication.vo.UserLoginVo;
 import com.rainer.cloudmall.authentication.vo.UserRegisterVo;
-import com.rainer.cloudmall.common.exception.CommonException;
+import com.rainer.cloudmall.authentication.vo.UserVo;
+import com.rainer.cloudmall.common.constant.SessionConstants;
 import com.rainer.cloudmall.common.exception.code.CommonCode;
-import com.rainer.cloudmall.common.exception.code.UserCode;
 import com.rainer.cloudmall.common.utils.FeignResult;
 import feign.FeignException;
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -134,5 +136,24 @@ public class AuthService {
         } finally {
             stringRedisTemplate.delete(lockKey);
         }
+    }
+
+    public String login(UserLoginVo loginVo, RedirectAttributes redirectAttributes, HttpSession session) {
+        Map<String, String> errors = new HashMap<>();
+        try {
+            FeignResult<UserVo> result = memberFeignService.login(loginVo);
+            if (result.getCode() == CommonCode.OK.getCode()) {
+                log.info("登录成功：account={}", loginVo.getLoginacct());
+                session.setAttribute(SessionConstants.LOGIN_USER, result.getData());
+                return "redirect:http://cloudmall.com";
+            } else {
+                errors.put("msg", result.getMsg());
+            }
+        } catch (FeignException e) {
+            errors.put("msg", e.getMessage());
+            log.warn("远程调用失败：message={}", e.getMessage());
+        }
+        redirectAttributes.addFlashAttribute("errors", errors);
+        return "redirect:http://auth.cloudmall.com/login.html";
     }
 }

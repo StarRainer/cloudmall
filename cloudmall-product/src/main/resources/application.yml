@@ -30,6 +30,9 @@ spring:
       use-key-prefix: true
       time-to-live: 300000
       key-prefix: cloudmall
+  session:
+    redis:
+      namespace: cloudmall:session
 #  config:
 #    import:
 #      - nacos:cloudmall-product.yml?refreshEnabled=true

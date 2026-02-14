@@ -3,6 +3,8 @@ package com.rainer.cloudmall.member.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.rainer.cloudmall.common.utils.PageUtils;
 import com.rainer.cloudmall.member.entity.MemberEntity;
+import com.rainer.cloudmall.member.to.GitHubUserTo;
+import com.rainer.cloudmall.member.vo.MemberLoginVo;
 import com.rainer.cloudmall.member.vo.MemberRegisterVo;
 
 import java.util.Map;
@@ -21,5 +23,9 @@ public interface MemberService extends IService<MemberEntity> {
     long countByMobile(String phone);
 
     long countByUsername(String userName);
+
+    MemberEntity login(MemberLoginVo memberLoginVo);
+
+    MemberEntity getMemberBySocialUid(Long socialUid);
 }
 
