@@ -12,8 +12,8 @@ import org.springframework.session.web.http.DefaultCookieSerializer;
 public class SessionConfig  {
 
     @Bean
-    public RedisSerializer<Object> springSessionDefaultRedisSerializer(ObjectMapper objectMapper) {
-        return new GenericJackson2JsonRedisSerializer(objectMapper);
+    public RedisSerializer<Object> springSessionDefaultRedisSerializer() {
+        return new GenericJackson2JsonRedisSerializer();
     }
 
     @Bean

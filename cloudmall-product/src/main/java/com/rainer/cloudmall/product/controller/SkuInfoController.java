@@ -43,6 +43,11 @@ public class SkuInfoController {
         return Result.ok().put("page", page);
     }
 
+    @RequestMapping("/skuinfo/{skuId}")
+    public FeignResult<SkuInfoEntity> skuInfo(@PathVariable("skuId") Long skuId){
+        return FeignResult.success(skuInfoService.getById(skuId));
+    }
+
 
     /**
      * 信息

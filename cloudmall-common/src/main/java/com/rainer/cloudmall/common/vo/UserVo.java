@@ -1,4 +1,4 @@
-package com.rainer.cloudmall.cart.vo;
+package com.rainer.cloudmall.common.vo;
 
 import lombok.Data;
 

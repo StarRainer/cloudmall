@@ -30,3 +30,8 @@ server:
   servlet:
     session:
       timeout: 360m
+cloudmall:
+  thread-pool:
+    core-pool-size: 15
+    maximum-pool-size: 25
+    keep-alive-time: 10
