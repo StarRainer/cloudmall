@@ -18,6 +18,9 @@ public class CartItemVo {
     private BigDecimal totalPrice;
 
     public BigDecimal getTotalPrice() {
+        if (!check) {
+            return BigDecimal.ZERO;
+        }
         return this.price.multiply(BigDecimal.valueOf(count));
     }
 }

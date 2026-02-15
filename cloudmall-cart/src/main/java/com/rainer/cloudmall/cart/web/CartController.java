@@ -2,6 +2,7 @@ package com.rainer.cloudmall.cart.web;
 
 import com.rainer.cloudmall.cart.service.CartService;
 import com.rainer.cloudmall.cart.vo.CartItemVo;
+import com.rainer.cloudmall.cart.vo.CartVo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +18,9 @@ public class CartController {
     }
 
     @GetMapping("/cart.html")
-    public String cartList() {
+    public String cartList(Model model) {
+        CartVo cartVo = cartService.getCart();
+        model.addAttribute("cart", cartVo);
         return "cartList";
     }
 
@@ -37,4 +40,23 @@ public class CartController {
         return "success";
     }
 
+    @GetMapping("/checkItem")
+    public String checkItem(@RequestParam("skuId") Long skuId,
+                            @RequestParam("checked") Integer checked) {
+        cartService.checkItem(skuId, checked);
+        return "redirect:http://cart.cloudmall.com/cart.html";
+    }
+
+    @GetMapping("/countItem")
+    public String countItem(@RequestParam("skuId") Long skuId,
+                            @RequestParam("num") Integer num) {
+        cartService.countItem(skuId, num);
+        return "redirect:http://cart.cloudmall.com/cart.html";
+    }
+
+    @GetMapping("/deleteItem")
+    public String deleteItem(@RequestParam("skuId") Long skuId) {
+        cartService.deleteItem(skuId);
+        return "redirect:http://cart.cloudmall.com/cart.html";
+    }
 }

@@ -20,4 +20,8 @@ public final class UserContext {
     public static void remove() {
         threadLocal.remove();
     }
+
+    public static boolean isLogin() {
+        return get().getUserId() != null;
+    }
 }

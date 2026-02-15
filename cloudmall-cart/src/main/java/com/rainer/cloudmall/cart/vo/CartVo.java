@@ -38,6 +38,6 @@ public class CartVo {
                 .filter(Objects::nonNull)
                 .map(item -> item.getTotalPrice() == null ? BigDecimal.ZERO : item.getTotalPrice())
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .subtract(getReduce());
+                .subtract(getReduce() == null ? BigDecimal.ZERO : getReduce());
     }
 }
