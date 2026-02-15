@@ -1,4 +1,4 @@
-package com.rainer.cloudmall.product.config;
+package com.rainer.cloudmall.cart.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,4 +21,5 @@ public class SessionConfig {
         serializer.setDomainName("cloudmall.com");
         return serializer;
     }
+
 }

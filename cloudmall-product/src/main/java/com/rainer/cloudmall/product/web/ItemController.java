@@ -1,6 +1,5 @@
 package com.rainer.cloudmall.product.web;
 
-import com.rainer.cloudmall.product.service.SkuInfoService;
 import com.rainer.cloudmall.product.service.SkuManager;
 import com.rainer.cloudmall.product.vo.SkuItemVo;
 import org.springframework.stereotype.Controller;

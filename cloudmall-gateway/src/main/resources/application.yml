@@ -59,5 +59,9 @@ spring:
           uri: lb://cloudmall-authentication
           predicates:
             - Host=auth.cloudmall.com
+        - id: cloudmall_cart_route
+          uri: lb://cloudmall-cart
+          predicates:
+            - Host=cart.cloudmall.com
 server:
   port: 20000
